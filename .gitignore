@@ -13,15 +13,3 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
-
-.vscode/
-.idea/
-config.*.yaml
-docs/node_modules
-docs/web_deploy
-
-# ignores all goland project folders and files
-.idea
-*.iml
-*.ipr 
-
