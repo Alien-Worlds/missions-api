@@ -1,13 +1,13 @@
-package service
+package checker_events
 
 import (
     "net"
     "net/http"
 
-    "gitlab.com/distributed_lab/logan/v3/errors"
-    "gitlab.com/distributed_lab/kit/copus/types"
     "github.com/redcuckoo/bsc-checker-events/internal/config"
+    "gitlab.com/distributed_lab/kit/copus/types"
     "gitlab.com/distributed_lab/logan/v3"
+    "gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 type service struct {

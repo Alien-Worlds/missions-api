@@ -1,3 +1,5 @@
+-- +migrate Up
+
 CREATE TABLE Mission
 (
     missionId     INT GENERATED ALWAYS AS IDENTITY,
@@ -16,3 +18,7 @@ CREATE TABLE Mission
     nftTokenURI   VARCHAR(20)  NOT NULL,
     PRIMARY KEY (missionId)
 );
+
+-- +migrate Down
+
+DROP TABLE Mission;

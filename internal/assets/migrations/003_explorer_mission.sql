@@ -1,3 +1,5 @@
+-- +migrate Up
+
 CREATE TABLE ExplorerMission
 (
     explorerMissionId INT GENERATED ALWAYS AS IDENTITY,
@@ -17,3 +19,7 @@ CREATE TABLE ExplorerMission
             REFERENCES Mission (missionId)
             ON DELETE SET NULL
 );
+
+-- +migrate Down
+
+DROP TABLE ExplorerMission;
