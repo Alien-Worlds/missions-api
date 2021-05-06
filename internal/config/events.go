@@ -7,7 +7,9 @@ import (
 )
 
 type EventsConfig struct {
-	RedemptionRequestHash string `fig:"redemption_requested_hash,required"`
+	MissionJoinedHash string `fig:"mission_joined_hash,required"`
+	MissionCreatedHash string `fig:"mission_created_hash,required"`
+	RewardWithdrawnHash string `fig:"reward_withdrawn_hash,required"`
 }
 
 func (c *config) EventsConfig() EventsConfig {
