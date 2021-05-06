@@ -1,8 +1,17 @@
 package data
 
+type MissionQ interface {
+	New() MissionQ
+
+	Get() (*Mission, error)
+	Select() ([]Mission, error)
+
+	Insert(mission Mission) (Mission, error)
+	Update(mission Mission) (Mission, error)
+}
 
 type Mission struct{
-	missionId     uint64
+	MissionId     uint64
 	description   string
 	name          string
 	boardingTime  uint64
