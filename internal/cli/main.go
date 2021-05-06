@@ -2,10 +2,9 @@ package cli
 
 import (
     "github.com/alecthomas/kingpin"
+    "github.com/redcuckoo/bsc-checker-events/internal/config"
     "gitlab.com/distributed_lab/kit/kv"
     "gitlab.com/distributed_lab/logan/v3"
-    "github.com/redcuckoo/bsc-checker-events/internal/service"
-    "github.com/redcuckoo/bsc-checker-events/internal/config"
 )
 
 func Run(args []string) bool {
@@ -37,13 +36,19 @@ func Run(args []string) bool {
         return false
     }
 
+    //ctx := context.Background();
+
     switch cmd {
     case serviceCmd.FullCommand():
-        service.Run(cfg)
+    //    svc := checker_events.New(cfg)
+    //    svc.Run(ctx)
+        return true
     case migrateUpCmd.FullCommand():
         err = MigrateUp(cfg)
+        //return true
     case migrateDownCmd.FullCommand():
         err = MigrateDown(cfg)
+        //return true
     // handle any custom commands here in the same way
     default:
         log.Errorf("unknown command %s", cmd)
@@ -53,5 +58,7 @@ func Run(args []string) bool {
         log.WithError(err).Error("failed to exec cmd")
         return false
     }
+
+    //<- ctx.Done()
     return true
 }
