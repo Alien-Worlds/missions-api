@@ -25,4 +25,5 @@ type Mission struct{
 	totalShips    uint64
 	nftContract   []byte
 	nftTokenURI   string
+	explorers 		[]Explorer
 }
