@@ -12,18 +12,17 @@ type MissionQ interface {
 
 type Mission struct{
 	MissionId     uint64
-	description   string
-	name          string
-	boardingTime  uint64
-	launchTime    uint64
-	endTime       uint64
-	duration      uint64
-	missionType   uint64
-	reward        uint64
-	spaceshipCost uint64
-	missionPower  uint64
-	totalShips    uint64
-	nftContract   []byte
-	nftTokenURI   string
-	explorers 		[]Explorer
+	Description   string
+	Name          string
+	BoardingTime  uint64
+	LaunchTime    uint64
+	EndTime       uint64
+	Duration      uint64
+	MissionType   uint64
+	Reward        uint64
+	SpaceshipCost uint64
+	MissionPower  uint64
+	TotalShips    uint64
+	NftContract   []byte
+	NftTokenURI   string
 }

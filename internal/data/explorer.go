@@ -4,6 +4,9 @@ type ExplorerQ interface {
 	New() ExplorerQ
 
 	Get() (*Explorer, error)
+	SelectTotalTLM(explorerId string) (*Explorer, error)
+	SelectTotalBNB(explorerId string) (*Explorer, error)
+
 	Select() ([]Explorer, error)
 
 	Insert(mission Explorer) (Explorer, error)
@@ -11,8 +14,7 @@ type ExplorerQ interface {
 }
 
 type Explorer struct{
-	ExplorerId    uint64
-	totalStakeTLM uint64
-	totalStakeBNB uint64
-	missions []Mission
+	ExplorerId    string
+	TotalStakeTLM uint64
+	TotalStakeBNB uint64
 }

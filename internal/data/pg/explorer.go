@@ -2,6 +2,7 @@ package pg
 
 import (
 	"database/sql"
+	"strings"
 
 	"github.com/Masterminds/squirrel"
 	"github.com/fatih/structs"
@@ -40,6 +41,34 @@ func (d *explorerQ) Get() (*data.Explorer, error) {
 func (d *explorerQ) Select() ([]data.Explorer, error) {
 	var result []data.Explorer
 	err := d.db.Select(&result, d.sql)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+
+	return result, err
+}
+
+func (d *explorerQ) SelectTotalTLM(explorerId string) (*data.Explorer, error) {
+	var result *data.Explorer
+	var sb strings.Builder
+	sb.WriteString("SELECT totalStakeTLM from Explorer where explorerId=")
+	sb.WriteString(explorerId)
+	sb.WriteString(";")
+	err := d.db.Select(&result, squirrel.Select(sb.String()).From(tableExplorer))
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+
+	return result, err
+}
+
+func (d *explorerQ) SelectTotalBNB(explorerId string) (*data.Explorer, error) {
+	var result *data.Explorer
+	var sb strings.Builder
+	sb.WriteString("SELECT totalStakeBNB from Explorer where explorerId=")
+	sb.WriteString(explorerId)
+	sb.WriteString(";")
+	err := d.db.Select(&result, squirrel.Select(sb.String()).From(tableExplorer))
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}
