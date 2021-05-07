@@ -10,9 +10,9 @@ import (
 	"time"
 
 	//_ "github.com/binance-chain/bsc-static/bsc"
-	"github.com/binance-chain/bsc/accounts/abi/bind"
+	"github.com/binance-chain/bsc-static/bsc/accounts/abi/bind"
 	//_ "github.com/binance-chain/bsc-static/bsc/common"
-	"github.com/binance-chain/bsc/core/types"
+	"github.com/binance-chain/bsc-static/bsc/core/types"
 	//_ "github.com/lib/pq"
 	"github.com/redcuckoo/bsc-checker-events/internal/contracts"
 	"github.com/redcuckoo/bsc-checker-events/internal/data"
@@ -118,7 +118,6 @@ func (s *Service) processTransfer(ctx context.Context, event types.Log) error {
 			TotalShips:    0,
 			NftContract:   mission.NftInfo.ContractAddress.Bytes(),
 			NftTokenURI:   mission.NftInfo.TokenURI,
-			//explorers 		[]Explorer
 		}
 
 		//TODO: mission check
@@ -129,51 +128,95 @@ func (s *Service) processTransfer(ctx context.Context, event types.Log) error {
 
 		s.log.WithField("mission_id", missionDB.MissionId).Info("Success get mission")
 	case s.eventsConfig.MissionJoinedHash:
-		//missionJoined, err := spaceshipToken.ParseMissionJoined(ethTypes.Log(event))
-		//if err != nil {
-		//	return errors.Wrap(err, "failed parse mission joined")
-		//}
-		//mission, err := spaceshipToken.Missions((*bind2.CallOpts)(&bind.CallOpts{}), missionJoined.MissionId)
-		//
-		//if err != nil {
-		//	return errors.Wrap(err, "failed get info about mission joined")
-		//}
-		//
-		//investINFO, err := spaceshipToken.MissionToUsersInvest((*bind2.CallOpts)(&bind.CallOpts{}),missionJoined.MissionId, missionJoined.Player)
-		//
-		//explorerDB := data.Explorer{
-		//	ExplorerId:
-		//	totalStakeTLM uint64
-		//	totalStakeBNB uint64
-		//	missions []Mission
-		//}
-		//
-		//missionDB := data.Mission{
-		//	MissionId:     missionJoined.MissionId.Uint64(),
-		//	Description:   mission.Description,
-		//	Name:          mission.Name,
-		//	BoardingTime:  mission.BoardingTime,
-		//	LaunchTime:    mission.LaunchTime,
-		//	EndTime:       mission.Duration + mission.LaunchTime,
-		//	Duration:      mission.Duration,
-		//	MissionType:   mission.MissionType,
-		//	Reward:        mission.Reward.Uint64(),
-		//	SpaceshipCost: mission.SpaceshipCost.Uint64(),
-		//	MissionPower:  mission.MissionPower.Uint64(),
-		//	TotalShips:    missionJoined.Player,         //TODO:
-		//	NftContract:   mission.NftInfo.ContractAddress.Bytes(),
-		//	NftTokenURI:   mission.NftInfo.TokenURI,
-		//	Explorers:     missionJoined.Player,
-		//}
-		//
-		////TODO: mission check
-		//_, err = s.missionQ.Insert(missionDB)
-		//if err != nil {
-		//	return errors.Wrap(err, "failed to insert to db")
-		//}
-		//
-		//s.log.WithField("mission_id", missionDB.MissionId).Info("Success get mission")
+		missionJoined, err := spaceshipToken.ParseMissionJoined(ethTypes.Log(event))
+		if err != nil {
+			return errors.Wrap(err, "failed parse mission joined")
+		}
+		mission, err := spaceshipToken.Missions((*bind2.CallOpts)(&bind.CallOpts{}), missionJoined.MissionId)
+
+		if err != nil {
+			return errors.Wrap(err, "failed get info about mission joined")
+		}
+
+		investINFO, err := spaceshipToken.MissionToUsersInvest((*bind2.CallOpts)(&bind.CallOpts{}),missionJoined.MissionId, missionJoined.Player)
+
+		explorerMissionDB := data.ExplorerMission{
+			Explorer:      missionJoined.Player.String(),
+			Mission:       missionJoined.MissionId.Uint64(),
+			Withdrawn:     false,
+			NumberShips:   investINFO.Ships.Uint64(),
+			TotalStakeTLM: investINFO.Ships.Uint64() * mission.SpaceshipCost.Uint64(),
+			TotalStakeBNB: investINFO.BNBAmount.Uint64(),
+		}
+
+		totalStakedTLM, err := s.explorerQ.SelectTotalTLM(missionJoined.Player.String())
+		totalStakedBNB, err := s.explorerQ.SelectTotalBNB(missionJoined.Player.String())
+
+		explorerDB := data.Explorer{
+			ExplorerId:    missionJoined.Player.String(),
+			TotalStakeTLM: totalStakedTLM.TotalStakeTLM + explorerMissionDB.TotalStakeTLM,
+			TotalStakeBNB: totalStakedBNB.TotalStakeBNB + investINFO.BNBAmount.Uint64(),
+		}
+
+		missionDB := data.Mission{
+			MissionId:     missionJoined.MissionId.Uint64(),
+			Description:   mission.Description,
+			Name:          mission.Name,
+			BoardingTime:  mission.BoardingTime,
+			LaunchTime:    mission.LaunchTime,
+			EndTime:       mission.Duration + mission.LaunchTime,
+			Duration:      mission.Duration,
+			MissionType:   mission.MissionType,
+			Reward:        mission.Reward.Uint64(),
+			SpaceshipCost: mission.SpaceshipCost.Uint64(),
+			MissionPower:  mission.MissionPower.Uint64(),
+			TotalShips:    investINFO.Ships.Uint64(),
+			NftContract:   mission.NftInfo.ContractAddress.Bytes(),
+			NftTokenURI:   mission.NftInfo.TokenURI,
+		}
+
+		//TODO: mission check
+		_, err = s.missionQ.Update(missionDB)
+		_, err = s.explorerQ.Update(explorerDB)
+		_, err = s.explorer_missionQ.Insert(explorerMissionDB)
+		if err != nil {
+			return errors.Wrap(err, "failed to insert/update to db")
+		}
+
+		s.log.WithField("mission_id", missionDB.MissionId).Info("Success get mission joined")
 	case s.eventsConfig.RewardWithdrawnHash:
+		rewardWithdrawn, err := spaceshipToken.ParseRewardWithdrawn(ethTypes.Log(event))
+		if err != nil {
+			return errors.Wrap(err, "failed parse reward withdrawn")
+		}
+		mission, err := spaceshipToken.Missions((*bind2.CallOpts)(&bind.CallOpts{}), rewardWithdrawn.MissionId)
+		if err != nil {
+			return errors.Wrap(err, "failed get info about mission ")
+		}
+		missionDB := data.Mission{
+			MissionId:     rewardWithdrawn.MissionId.Uint64(),
+			Description:   mission.Description,
+			Name:          mission.Name,
+			BoardingTime:  mission.BoardingTime,
+			LaunchTime:    mission.LaunchTime,
+			EndTime:       mission.Duration + mission.LaunchTime,
+			Duration:      mission.Duration,
+			MissionType:   mission.MissionType,
+			Reward:        mission.Reward.Uint64(),
+			SpaceshipCost: mission.SpaceshipCost.Uint64(),
+			MissionPower:  mission.MissionPower.Uint64(),
+			TotalShips:    0,
+			NftContract:   mission.NftInfo.ContractAddress.Bytes(),
+			NftTokenURI:   mission.NftInfo.TokenURI,
+		}
+
+		//TODO: mission check
+		_, err = s.missionQ.Insert(missionDB)
+		if err != nil {
+			return errors.Wrap(err, "failed to insert to db")
+		}
+
+		s.log.WithField("mission_id", missionDB.MissionId).Info("Success get mission")
 	default:
 		return nil
 	}
@@ -220,7 +263,7 @@ func (s *Service) processTransfer(ctx context.Context, event types.Log) error {
 	//if conflict.TxHashEth == event.TxHash.String() {
 	//	return nil
 	//}
-	//
+
 	//_, err = s.missionQ.Insert(mission)
 	//if err != nil {
 	//	return errors.Wrap(err, "failed to insert to db")
