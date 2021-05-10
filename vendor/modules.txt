@@ -8,46 +8,21 @@ github.com/VictoriaMetrics/fastcache
 # github.com/alecthomas/kingpin v2.2.6+incompatible
 ## explicit
 github.com/alecthomas/kingpin
-# github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
-## explicit
+# github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc
 github.com/alecthomas/template
 github.com/alecthomas/template/parse
-# github.com/alecthomas/units v0.0.0-20210208195552-ff826a37aa15
-## explicit
+# github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf
 github.com/alecthomas/units
-# github.com/beorn7/perks v1.0.0
-github.com/beorn7/perks/quantile
-# github.com/binance-chain/go-sdk v1.2.6
-## explicit
-github.com/binance-chain/go-sdk/client/rpc
-github.com/binance-chain/go-sdk/common
-github.com/binance-chain/go-sdk/common/bech32
-github.com/binance-chain/go-sdk/common/ledger
-github.com/binance-chain/go-sdk/common/rlp
-github.com/binance-chain/go-sdk/common/types
-github.com/binance-chain/go-sdk/common/uuid
-github.com/binance-chain/go-sdk/keys
-github.com/binance-chain/go-sdk/types
-github.com/binance-chain/go-sdk/types/msg
-github.com/binance-chain/go-sdk/types/tx
-# github.com/binance-chain/ledger-cosmos-go v0.9.9-binance.1
-github.com/binance-chain/ledger-cosmos-go
 # github.com/btcsuite/btcd v0.20.1-beta
 github.com/btcsuite/btcd/btcec
-# github.com/btcsuite/btcutil v0.0.0-20190425235716-9e5f4b9a998d
-github.com/btcsuite/btcutil/bech32
 # github.com/cespare/xxhash/v2 v2.1.1
 github.com/cespare/xxhash/v2
-# github.com/cosmos/go-bip39 v0.0.0-20180819234021-555e2067c45d
-github.com/cosmos/go-bip39
 # github.com/davecgh/go-spew v1.1.1
 github.com/davecgh/go-spew/spew
 # github.com/deckarep/golang-set v0.0.0-20180603214616-504e848d77ea
 github.com/deckarep/golang-set
 # github.com/edsrzf/mmap-go v1.0.0
 github.com/edsrzf/mmap-go
-# github.com/etcd-io/bbolt v1.3.3
-github.com/etcd-io/bbolt
 # github.com/ethereum/go-ethereum v1.10.3
 ## explicit
 github.com/ethereum/go-ethereum
@@ -92,6 +67,7 @@ github.com/ethereum/go-ethereum/crypto/secp256k1/libsecp256k1/src/modules/recove
 github.com/ethereum/go-ethereum/eth/downloader
 github.com/ethereum/go-ethereum/eth/protocols/eth
 github.com/ethereum/go-ethereum/eth/protocols/snap
+github.com/ethereum/go-ethereum/ethclient
 github.com/ethereum/go-ethereum/ethdb
 github.com/ethereum/go-ethereum/ethdb/leveldb
 github.com/ethereum/go-ethereum/ethdb/memorydb
@@ -123,21 +99,8 @@ github.com/fatih/structs
 github.com/fsnotify/fsnotify
 # github.com/gballet/go-libpcsclite v0.0.0-20190607065134-2772fd86a8ff
 github.com/gballet/go-libpcsclite
-# github.com/getsentry/sentry-go v0.10.0
-## explicit
+# github.com/getsentry/sentry-go v0.7.0
 github.com/getsentry/sentry-go
-github.com/getsentry/sentry-go/internal/crypto/randutil
-github.com/getsentry/sentry-go/internal/debug
-# github.com/go-kit/kit v0.8.0
-github.com/go-kit/kit/log
-github.com/go-kit/kit/log/level
-github.com/go-kit/kit/log/term
-github.com/go-kit/kit/metrics
-github.com/go-kit/kit/metrics/discard
-github.com/go-kit/kit/metrics/internal/lv
-github.com/go-kit/kit/metrics/prometheus
-# github.com/go-logfmt/logfmt v0.5.0
-github.com/go-logfmt/logfmt
 # github.com/go-ole/go-ole v1.2.1
 github.com/go-ole/go-ole
 github.com/go-ole/go-ole/oleutil
@@ -156,20 +119,9 @@ github.com/gobuffalo/packr/v2/file/resolver
 github.com/gobuffalo/packr/v2/file/resolver/encoding/hex
 github.com/gobuffalo/packr/v2/jam/parser
 github.com/gobuffalo/packr/v2/plog
-# github.com/gogo/protobuf v1.3.1
-github.com/gogo/protobuf/gogoproto
-github.com/gogo/protobuf/jsonpb
-github.com/gogo/protobuf/proto
-github.com/gogo/protobuf/protoc-gen-gogo/descriptor
-github.com/gogo/protobuf/sortkeys
-github.com/gogo/protobuf/types
 # github.com/golang/protobuf v1.4.3
 github.com/golang/protobuf/proto
 github.com/golang/protobuf/protoc-gen-go/descriptor
-github.com/golang/protobuf/ptypes
-github.com/golang/protobuf/ptypes/any
-github.com/golang/protobuf/ptypes/duration
-github.com/golang/protobuf/ptypes/timestamp
 # github.com/golang/snappy v0.0.3-0.20201103224600-674baa8c7fc3
 github.com/golang/snappy
 # github.com/google/uuid v1.1.5
@@ -204,30 +156,25 @@ github.com/huin/goupnp/soap
 github.com/huin/goupnp/ssdp
 # github.com/jackpal/go-nat-pmp v1.0.2-0.20160603034137-1fa385a6f458
 github.com/jackpal/go-nat-pmp
-# github.com/jmhodges/levigo v1.0.0
-github.com/jmhodges/levigo
-# github.com/jmoiron/sqlx v1.3.3
-## explicit
+# github.com/jmoiron/sqlx v1.2.0
 github.com/jmoiron/sqlx
 github.com/jmoiron/sqlx/reflectx
 # github.com/karalabe/usb v0.0.0-20190919080040-51dc0efba356
 github.com/karalabe/usb
-# github.com/karrick/godirwalk v1.16.1
-## explicit
+# github.com/karrick/godirwalk v1.15.8
 github.com/karrick/godirwalk
+# github.com/konsorten/go-windows-terminal-sequences v1.0.3
+github.com/konsorten/go-windows-terminal-sequences
 # github.com/lann/builder v0.0.0-20180802200727-47ae307949d0
 github.com/lann/builder
 # github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0
 github.com/lann/ps
-# github.com/lib/pq v1.10.1
+# github.com/lib/pq v1.10.0
 ## explicit
 github.com/lib/pq
 github.com/lib/pq/oid
 github.com/lib/pq/scram
-# github.com/libp2p/go-buffer-pool v0.0.1
-github.com/libp2p/go-buffer-pool
-# github.com/magiconair/properties v1.8.5
-## explicit
+# github.com/magiconair/properties v1.8.0
 github.com/magiconair/properties
 # github.com/markbates/errx v1.1.0
 github.com/markbates/errx
@@ -237,43 +184,21 @@ github.com/markbates/oncer
 github.com/markbates/safe
 # github.com/mattn/go-runewidth v0.0.9
 github.com/mattn/go-runewidth
-# github.com/matttproud/golang_protobuf_extensions v1.0.1
-github.com/matttproud/golang_protobuf_extensions/pbutil
-# github.com/mitchellh/mapstructure v1.4.1
-## explicit
+# github.com/mitchellh/mapstructure v1.1.2
 github.com/mitchellh/mapstructure
 # github.com/olekukonko/tablewriter v0.0.5
 github.com/olekukonko/tablewriter
-# github.com/pelletier/go-toml v1.9.0
-## explicit
+# github.com/pelletier/go-toml v1.2.0
 github.com/pelletier/go-toml
 # github.com/peterh/liner v1.1.1-0.20190123174540-a2c9a5303de7
 github.com/peterh/liner
 # github.com/pkg/errors v0.9.1
+## explicit
 github.com/pkg/errors
-# github.com/prometheus/client_golang v1.0.0
-github.com/prometheus/client_golang/prometheus
-github.com/prometheus/client_golang/prometheus/internal
-github.com/prometheus/client_golang/prometheus/promhttp
-# github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4
-github.com/prometheus/client_model/go
-# github.com/prometheus/common v0.6.0
-github.com/prometheus/common/expfmt
-github.com/prometheus/common/internal/bitbucket.org/ww/goautoneg
-github.com/prometheus/common/model
-# github.com/prometheus/procfs v0.0.2
-github.com/prometheus/procfs
-github.com/prometheus/procfs/internal/fs
 # github.com/prometheus/tsdb v0.7.1
 github.com/prometheus/tsdb/fileutil
-# github.com/rcrowley/go-metrics v0.0.0-20181016184325-3113b8401b8a
-github.com/rcrowley/go-metrics
 # github.com/rjeczalik/notify v0.9.1
 github.com/rjeczalik/notify
-# github.com/rogpeppe/go-internal v1.8.0
-## explicit
-# github.com/rs/cors v1.7.0
-github.com/rs/cors
 # github.com/rubenv/sql-migrate v0.0.0-20210408115534-a32ed26c37ea
 ## explicit
 github.com/rubenv/sql-migrate
@@ -281,32 +206,24 @@ github.com/rubenv/sql-migrate/sqlparse
 # github.com/shirou/gopsutil v3.21.4-0.20210419000835-c7a38de76ee5+incompatible
 github.com/shirou/gopsutil/cpu
 github.com/shirou/gopsutil/internal/common
-# github.com/sirupsen/logrus v1.8.1
-## explicit
+# github.com/sirupsen/logrus v1.6.0
 github.com/sirupsen/logrus
-# github.com/spf13/afero v1.6.0
-## explicit
+# github.com/spf13/afero v1.1.2
 github.com/spf13/afero
 github.com/spf13/afero/mem
-# github.com/spf13/cast v1.3.1
-## explicit
+# github.com/spf13/cast v1.3.0
 github.com/spf13/cast
-# github.com/spf13/jwalterweatherman v1.1.0
-## explicit
+# github.com/spf13/jwalterweatherman v1.0.0
 github.com/spf13/jwalterweatherman
-# github.com/spf13/pflag v1.0.5
-## explicit
+# github.com/spf13/pflag v1.0.3
 github.com/spf13/pflag
-# github.com/spf13/viper v1.7.1
-## explicit
+# github.com/spf13/viper v1.4.0
 github.com/spf13/viper
 # github.com/status-im/keycard-go v0.0.0-20190316090335-8537d3370df4
 github.com/status-im/keycard-go/derivationpath
 # github.com/stellar/go v0.0.0-20210505162605-61ffb0d02908
 ## explicit
 github.com/stellar/go/support/errors
-# github.com/subosito/gotenv v1.2.0
-github.com/subosito/gotenv
 # github.com/syndtr/goleveldb v1.0.1-0.20210305035536-64b5b1c73954
 github.com/syndtr/goleveldb/leveldb
 github.com/syndtr/goleveldb/leveldb/cache
@@ -320,66 +237,6 @@ github.com/syndtr/goleveldb/leveldb/opt
 github.com/syndtr/goleveldb/leveldb/storage
 github.com/syndtr/goleveldb/leveldb/table
 github.com/syndtr/goleveldb/leveldb/util
-# github.com/tendermint/btcd v0.0.0-20180816174608-e5840949ff4f
-github.com/tendermint/btcd/btcec
-# github.com/tendermint/go-amino v0.14.1 => github.com/binance-chain/bnc-go-amino v0.14.1-binance.1
-github.com/tendermint/go-amino
-# github.com/tendermint/tendermint v0.32.3
-github.com/tendermint/tendermint/abci/client
-github.com/tendermint/tendermint/abci/example/code
-github.com/tendermint/tendermint/abci/example/counter
-github.com/tendermint/tendermint/abci/example/kvstore
-github.com/tendermint/tendermint/abci/types
-github.com/tendermint/tendermint/behaviour
-github.com/tendermint/tendermint/blockchain/v0
-github.com/tendermint/tendermint/blockchain/v1
-github.com/tendermint/tendermint/config
-github.com/tendermint/tendermint/consensus
-github.com/tendermint/tendermint/consensus/types
-github.com/tendermint/tendermint/crypto
-github.com/tendermint/tendermint/crypto/ed25519
-github.com/tendermint/tendermint/crypto/encoding/amino
-github.com/tendermint/tendermint/crypto/merkle
-github.com/tendermint/tendermint/crypto/multisig
-github.com/tendermint/tendermint/crypto/multisig/bitarray
-github.com/tendermint/tendermint/crypto/secp256k1
-github.com/tendermint/tendermint/crypto/secp256k1/internal/secp256k1
-github.com/tendermint/tendermint/crypto/tmhash
-github.com/tendermint/tendermint/evidence
-github.com/tendermint/tendermint/libs/autofile
-github.com/tendermint/tendermint/libs/clist
-github.com/tendermint/tendermint/libs/common
-github.com/tendermint/tendermint/libs/events
-github.com/tendermint/tendermint/libs/fail
-github.com/tendermint/tendermint/libs/flowrate
-github.com/tendermint/tendermint/libs/log
-github.com/tendermint/tendermint/libs/pubsub
-github.com/tendermint/tendermint/libs/pubsub/query
-github.com/tendermint/tendermint/mempool
-github.com/tendermint/tendermint/mock
-github.com/tendermint/tendermint/node
-github.com/tendermint/tendermint/p2p
-github.com/tendermint/tendermint/p2p/conn
-github.com/tendermint/tendermint/p2p/pex
-github.com/tendermint/tendermint/privval
-github.com/tendermint/tendermint/proxy
-github.com/tendermint/tendermint/rpc/client
-github.com/tendermint/tendermint/rpc/core
-github.com/tendermint/tendermint/rpc/core/types
-github.com/tendermint/tendermint/rpc/grpc
-github.com/tendermint/tendermint/rpc/lib/client
-github.com/tendermint/tendermint/rpc/lib/server
-github.com/tendermint/tendermint/rpc/lib/types
-github.com/tendermint/tendermint/state
-github.com/tendermint/tendermint/state/txindex
-github.com/tendermint/tendermint/state/txindex/kv
-github.com/tendermint/tendermint/state/txindex/null
-github.com/tendermint/tendermint/store
-github.com/tendermint/tendermint/types
-github.com/tendermint/tendermint/types/time
-github.com/tendermint/tendermint/version
-# github.com/tendermint/tm-db v0.1.1
-github.com/tendermint/tm-db
 # github.com/tklauser/go-sysconf v0.3.5
 github.com/tklauser/go-sysconf
 # github.com/tklauser/numcpus v0.2.2
@@ -389,10 +246,6 @@ github.com/tyler-smith/go-bip39
 github.com/tyler-smith/go-bip39/wordlists
 # github.com/xr9kayu/logrus v0.7.2
 github.com/xr9kayu/logrus/sentry
-# github.com/zondax/hid v0.9.0
-github.com/zondax/hid
-# github.com/zondax/ledger-go v0.9.0
-github.com/zondax/ledger-go
 # gitlab.com/distributed_lab/figure v2.1.0+incompatible
 ## explicit
 gitlab.com/distributed_lab/figure
@@ -406,54 +259,31 @@ gitlab.com/distributed_lab/kit/pgdb
 gitlab.com/distributed_lab/logan/v3
 gitlab.com/distributed_lab/logan/v3/errors
 gitlab.com/distributed_lab/logan/v3/fields
-# gitlab.com/distributed_lab/running v0.0.0-20200706131153-4af0e83eb96c
+# gitlab.com/distributed_lab/running v1.6.0
 ## explicit
 gitlab.com/distributed_lab/running
-# golang.org/x/crypto v0.0.0-20210503195802-e9a32991a82e
-## explicit
-golang.org/x/crypto/blake2b
-golang.org/x/crypto/chacha20
-golang.org/x/crypto/chacha20poly1305
-golang.org/x/crypto/curve25519
-golang.org/x/crypto/ed25519
-golang.org/x/crypto/ed25519/internal/edwards25519
+# golang.org/x/crypto v0.0.0-20210322153248-0c34fe9e7dc2
 golang.org/x/crypto/hkdf
-golang.org/x/crypto/internal/subtle
-golang.org/x/crypto/nacl/box
-golang.org/x/crypto/nacl/secretbox
 golang.org/x/crypto/pbkdf2
-golang.org/x/crypto/poly1305
 golang.org/x/crypto/ripemd160
-golang.org/x/crypto/salsa20/salsa
 golang.org/x/crypto/scrypt
 golang.org/x/crypto/sha3
 golang.org/x/crypto/ssh/terminal
 # golang.org/x/net v0.0.0-20210226172049-e18ecbb05110
-golang.org/x/net/context
 golang.org/x/net/html
 golang.org/x/net/html/atom
 golang.org/x/net/html/charset
-golang.org/x/net/http/httpguts
-golang.org/x/net/http2
-golang.org/x/net/http2/hpack
-golang.org/x/net/idna
-golang.org/x/net/internal/timeseries
-golang.org/x/net/netutil
-golang.org/x/net/trace
 # golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 golang.org/x/sync/errgroup
-# golang.org/x/sys v0.0.0-20210503173754-0981d6026fa6
-## explicit
+# golang.org/x/sys v0.0.0-20210420205809-ac73e9fd8988
 golang.org/x/sys/cpu
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/plan9
 golang.org/x/sys/unix
 golang.org/x/sys/windows
-# golang.org/x/term v0.0.0-20210503060354-a79de5458b56
-## explicit
+# golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1
 golang.org/x/term
-# golang.org/x/text v0.3.6
-## explicit
+# golang.org/x/text v0.3.4
 golang.org/x/text/encoding
 golang.org/x/text/encoding/charmap
 golang.org/x/text/encoding/htmlindex
@@ -470,49 +300,8 @@ golang.org/x/text/internal/tag
 golang.org/x/text/internal/utf8internal
 golang.org/x/text/language
 golang.org/x/text/runes
-golang.org/x/text/secure/bidirule
 golang.org/x/text/transform
-golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
-# google.golang.org/genproto v0.0.0-20200108215221-bd8f9a0ef82f
-google.golang.org/genproto/googleapis/rpc/status
-# google.golang.org/grpc v1.26.0
-google.golang.org/grpc
-google.golang.org/grpc/attributes
-google.golang.org/grpc/backoff
-google.golang.org/grpc/balancer
-google.golang.org/grpc/balancer/base
-google.golang.org/grpc/balancer/roundrobin
-google.golang.org/grpc/binarylog/grpc_binarylog_v1
-google.golang.org/grpc/codes
-google.golang.org/grpc/connectivity
-google.golang.org/grpc/credentials
-google.golang.org/grpc/credentials/internal
-google.golang.org/grpc/encoding
-google.golang.org/grpc/encoding/proto
-google.golang.org/grpc/grpclog
-google.golang.org/grpc/internal
-google.golang.org/grpc/internal/backoff
-google.golang.org/grpc/internal/balancerload
-google.golang.org/grpc/internal/binarylog
-google.golang.org/grpc/internal/buffer
-google.golang.org/grpc/internal/channelz
-google.golang.org/grpc/internal/envconfig
-google.golang.org/grpc/internal/grpcrand
-google.golang.org/grpc/internal/grpcsync
-google.golang.org/grpc/internal/resolver/dns
-google.golang.org/grpc/internal/resolver/passthrough
-google.golang.org/grpc/internal/syscall
-google.golang.org/grpc/internal/transport
-google.golang.org/grpc/keepalive
-google.golang.org/grpc/metadata
-google.golang.org/grpc/naming
-google.golang.org/grpc/peer
-google.golang.org/grpc/resolver
-google.golang.org/grpc/serviceconfig
-google.golang.org/grpc/stats
-google.golang.org/grpc/status
-google.golang.org/grpc/tap
 # google.golang.org/protobuf v1.23.0
 google.golang.org/protobuf/encoding/prototext
 google.golang.org/protobuf/encoding/protowire
@@ -542,16 +331,9 @@ google.golang.org/protobuf/reflect/protoregistry
 google.golang.org/protobuf/runtime/protoiface
 google.golang.org/protobuf/runtime/protoimpl
 google.golang.org/protobuf/types/descriptorpb
-google.golang.org/protobuf/types/known/anypb
-google.golang.org/protobuf/types/known/durationpb
-google.golang.org/protobuf/types/known/timestamppb
 # gopkg.in/gorp.v1 v1.7.2
 gopkg.in/gorp.v1
-# gopkg.in/ini.v1 v1.62.0
-## explicit
-gopkg.in/ini.v1
 # gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce
 gopkg.in/natefinch/npipe.v2
 # gopkg.in/yaml.v2 v2.4.0
 gopkg.in/yaml.v2
-# github.com/tendermint/go-amino => github.com/binance-chain/bnc-go-amino v0.14.1-binance.1

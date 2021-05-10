@@ -6,8 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -18,17 +16,6 @@ import (
 const defaultBufferSize = 30
 const defaultRetryAfter = time.Second * 60
 const defaultTimeout = time.Second * 30
-
-// maxDrainResponseBytes is the maximum number of bytes that transport
-// implementations will read from response bodies when draining them.
-//
-// Sentry's ingestion API responses are typically short and the SDK doesn't need
-// the contents of the response body. However, the net/http HTTP client requires
-// response bodies to be fully drained (and closed) for TCP keep-alive to work.
-//
-// maxDrainResponseBytes strikes a balance between reading too much data (if the
-// server is misbehaving) and reusing TCP connections.
-const maxDrainResponseBytes = 16 << 10
 
 // Transport is used by the Client to deliver events to remote server.
 type Transport interface {
@@ -62,8 +49,6 @@ func getTLSConfig(options ClientOptions) *tls.Config {
 }
 
 func retryAfter(now time.Time, r *http.Response) time.Duration {
-	// TODO(tracing): handle x-sentry-rate-limits, separate rate limiting
-	// per data type (error event, transaction, etc).
 	retryAfterHeader := r.Header["Retry-After"]
 
 	if retryAfterHeader == nil {
@@ -87,7 +72,7 @@ func getRequestBodyFromEvent(event *Event) []byte {
 		return body
 	}
 
-	msg := fmt.Sprintf("Could not encode original event as JSON. "+
+	partialMarshallMessage := fmt.Sprintf("Could not encode original event as JSON. "+
 		"Succeeded by removing Breadcrumbs, Contexts and Extra. "+
 		"Please verify the data you attach to the scope. "+
 		"Error: %s", err)
@@ -95,76 +80,54 @@ func getRequestBodyFromEvent(event *Event) []byte {
 	event.Breadcrumbs = nil
 	event.Contexts = nil
 	event.Extra = map[string]interface{}{
-		"info": msg,
+		"info": partialMarshallMessage,
 	}
 	body, err = json.Marshal(event)
 	if err == nil {
-		Logger.Println(msg)
+		Logger.Println(partialMarshallMessage)
 		return body
 	}
 
 	// This should _only_ happen when Event.Exception[0].Stacktrace.Frames[0].Vars is unserializable
 	// Which won't ever happen, as we don't use it now (although it's the part of public interface accepted by Sentry)
 	// Juuust in case something, somehow goes utterly wrong.
-	Logger.Println("Event couldn't be marshaled, even with stripped contextual data. Skipping delivery. " +
+	Logger.Println("Event couldn't be marshalled, even with stripped contextual data. Skipping delivery. " +
 		"Please notify the SDK owners with possibly broken payload.")
 	return nil
 }
 
-func transactionEnvelopeFromBody(eventID EventID, sentAt time.Time, body json.RawMessage) (*bytes.Buffer, error) {
+func getEnvelopeFromBody(body []byte, now time.Time) *bytes.Buffer {
 	var b bytes.Buffer
-	enc := json.NewEncoder(&b)
-	// envelope header
-	err := enc.Encode(struct {
-		EventID EventID   `json:"event_id"`
-		SentAt  time.Time `json:"sent_at"`
-	}{
-		EventID: eventID,
-		SentAt:  sentAt,
-	})
-	if err != nil {
-		return nil, err
-	}
-	// item header
-	err = enc.Encode(struct {
-		Type   string `json:"type"`
-		Length int    `json:"length"`
-	}{
-		Type:   transactionType,
-		Length: len(body),
-	})
-	if err != nil {
-		return nil, err
-	}
-	// payload
-	err = enc.Encode(body)
-	if err != nil {
-		return nil, err
-	}
-	return &b, nil
+	fmt.Fprintf(&b, `{"sent_at":"%s"}`, now.UTC().Format(time.RFC3339Nano))
+	fmt.Fprint(&b, "\n", `{"type":"transaction"}`, "\n")
+	b.Write(body)
+	return &b
 }
 
 func getRequestFromEvent(event *Event, dsn *Dsn) (*http.Request, error) {
 	body := getRequestBodyFromEvent(event)
 	if body == nil {
-		return nil, errors.New("event could not be marshaled")
+		return nil, errors.New("event could not be marshalled")
 	}
+
 	if event.Type == transactionType {
-		b, err := transactionEnvelopeFromBody(event.EventID, time.Now(), body)
-		if err != nil {
-			return nil, err
-		}
-		return http.NewRequest(
+		env := getEnvelopeFromBody(body, time.Now())
+		request, _ := http.NewRequest(
 			http.MethodPost,
 			dsn.EnvelopeAPIURL().String(),
-			b,
+			env,
 		)
+
+		return request, nil
 	}
-	return http.NewRequest(
+
+	request, _ := http.NewRequest(
 		http.MethodPost,
 		dsn.StoreAPIURL().String(),
-		bytes.NewReader(body),
+		bytes.NewBuffer(body),
 	)
+
+	return request, nil
 }
 
 // ================================
@@ -286,15 +249,9 @@ func (t *HTTPTransport) SendEvent(event *Event) {
 
 	select {
 	case b.items <- request:
-		var eventType string
-		if event.Type == transactionType {
-			eventType = "transaction"
-		} else {
-			eventType = fmt.Sprintf("%s event", event.Level)
-		}
 		Logger.Printf(
-			"Sending %s [%s] to %s project: %d",
-			eventType,
+			"Sending %s event [%s] to %s project: %d\n",
+			event.Level,
 			event.EventID,
 			t.dsn.host,
 			t.dsn.projectID,
@@ -384,21 +341,18 @@ func (t *HTTPTransport) worker() {
 			}
 
 			response, err := t.client.Do(request)
+
 			if err != nil {
 				Logger.Printf("There was an issue with sending an event: %v", err)
-				continue
 			}
-			if response.StatusCode == http.StatusTooManyRequests {
+
+			if response != nil && response.StatusCode == http.StatusTooManyRequests {
 				deadline := time.Now().Add(retryAfter(time.Now(), response))
 				t.mu.Lock()
 				t.disabledUntil = deadline
 				t.mu.Unlock()
 				Logger.Printf("Too many requests, backing off till: %s\n", deadline)
 			}
-			// Drain body up to a limit and close it, allowing the
-			// transport to reuse TCP connections.
-			_, _ = io.CopyN(ioutil.Discard, response.Body, maxDrainResponseBytes)
-			response.Body.Close()
 		}
 
 		// Signal that processing of the batch is done.
@@ -473,33 +427,24 @@ func (t *HTTPSyncTransport) SendEvent(event *Event) {
 		request.Header.Set(headerKey, headerValue)
 	}
 
-	var eventType string
-	if event.Type == transactionType {
-		eventType = "transaction"
-	} else {
-		eventType = fmt.Sprintf("%s event", event.Level)
-	}
 	Logger.Printf(
-		"Sending %s [%s] to %s project: %d",
-		eventType,
+		"Sending %s event [%s] to %s project: %d\n",
+		event.Level,
 		event.EventID,
 		t.dsn.host,
 		t.dsn.projectID,
 	)
 
 	response, err := t.client.Do(request)
+
 	if err != nil {
 		Logger.Printf("There was an issue with sending an event: %v", err)
-		return
 	}
-	if response.StatusCode == http.StatusTooManyRequests {
+
+	if response != nil && response.StatusCode == http.StatusTooManyRequests {
 		t.disabledUntil = time.Now().Add(retryAfter(time.Now(), response))
 		Logger.Printf("Too many requests, backing off till: %s\n", t.disabledUntil)
 	}
-	// Drain body up to a limit and close it, allowing the
-	// transport to reuse TCP connections.
-	_, _ = io.CopyN(ioutil.Discard, response.Body, maxDrainResponseBytes)
-	response.Body.Close()
 }
 
 // Flush is a no-op for HTTPSyncTransport. It always returns true immediately.
