@@ -1,9 +1,11 @@
 package config
 
 import (
-	"github.com/binance-chain/bsc/common"
-	"github.com/binance-chain/bsc/core/types"
-	bscClient "github.com/binance-chain/bsc/ethclient"
+	"github.com/ethereum/go-ethereum/core/types"
+	//"github.com/binance-chain/bsc-static/bsc/common"
+	//"github.com/binance-chain/bsc-static/bsc/core/types"
+	//bscClient "github.com/binance-chain/bsc-static/bsc/ethclient"
+	bscClient "github.com/ethereum/go-ethereum/ethclient"
 	"gitlab.com/distributed_lab/kit/comfig"
 	"gitlab.com/distributed_lab/kit/kv"
 	"gitlab.com/distributed_lab/kit/pgdb"
@@ -14,7 +16,7 @@ type Config interface {
 
 	EventsConfig() EventsConfig
 
-
+	Contract() ContractAddress
 	pgdb.Databaser
 	comfig.Logger
 }
@@ -30,7 +32,7 @@ type config struct {
 	getter kv.Getter
 	once   comfig.Once
 
-	contract common.Address
+	contract ContractAddress
 
 	lastBlock types.Block
 }

@@ -1,15 +1,18 @@
 package config
 
 import (
-	"github.com/binance-chain/bsc/common"
 	"github.com/pkg/errors"
 	"gitlab.com/distributed_lab/figure"
 	"gitlab.com/distributed_lab/kit/kv"
 )
 
-func (c *config) Contract() common.Address {
+type ContractAddress struct {
+	Address string `fig:"address,required"`
+}
+
+func (c *config) Contract() ContractAddress {
 	c.once.Do(func() interface{} {
-		var result string
+		var result ContractAddress
 
 		err := figure.
 			Out(&result).
@@ -20,7 +23,7 @@ func (c *config) Contract() common.Address {
 			panic(errors.Wrap(err, "failed to figure out contract"))
 		}
 
-		c.contract = common.HexToAddress(result)
+		c.contract = result
 		return nil
 	})
 
