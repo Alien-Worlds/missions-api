@@ -11,18 +11,18 @@ type MissionQ interface {
 }
 
 type Mission struct{
-	MissionId     uint64
-	Description   string
-	Name          string
-	BoardingTime  uint64
-	LaunchTime    uint64
-	EndTime       uint64
-	Duration      uint64
-	MissionType   uint64
-	Reward        uint64
-	SpaceshipCost uint64
-	MissionPower  uint64
-	TotalShips    uint64
-	NftContract   []byte
-	NftTokenURI   string
+	MissionId     uint64 `db:"mission_id" structs:"mission_id"`
+	Description   string `db:"description" structs:"description"`
+	Name          string `db:"name" structs:"name"`
+	BoardingTime  uint64 `db:"boarding_time" structs:"boarding_time"`
+	LaunchTime    uint64 `db:"launch_time" structs:"launch_time"`
+	EndTime       uint64 `db:"end_time" structs:"end_time"`
+	Duration      uint64 `db:"duration" structs:"duration"`
+	MissionType   uint64 `db:"mission_type" structs:"mission_type"`
+	Reward        uint64 `db:"reward" structs:"reward"`
+	SpaceshipCost uint64 `db:"spaceship_cost" structs:"spaceship_cost"`
+	MissionPower  uint64 `db:"mission_power" structs:"mission_power"`
+	TotalShips    uint64 `db:"total_ships" structs:"total_ships"`
+	NftContract   []byte `db:"nft_contract" structs:"nft_contract"`
+	NftTokenURI   string `db:"nft_token_uri" structs:"nft_token_uri"`
 }

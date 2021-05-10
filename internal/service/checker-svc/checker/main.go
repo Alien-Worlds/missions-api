@@ -1,9 +1,9 @@
 package checker
 
 import (
-	//"binance-chain/bsc-static/bsc/common"
-	"github.com/binance-chain/bsc-static/bsc/common"
-	bscClient "github.com/binance-chain/bsc-static/bsc/ethclient"
+
+	//bscClient "github.com/binance-chain/bsc-static/bsc/ethclient"
+	bscClient "github.com/ethereum/go-ethereum/ethclient"
 	"github.com/redcuckoo/bsc-checker-events/internal/config"
 	"github.com/redcuckoo/bsc-checker-events/internal/data"
 	"github.com/redcuckoo/bsc-checker-events/internal/data/pg"
@@ -16,7 +16,7 @@ type Service struct {
 	missionQ          data.MissionQ
 	explorerQ         data.ExplorerQ
 	explorer_missionQ data.ExplorerMissionQ
-	contractAddress   common.Address
+	contractAddress   config.ContractAddress
 	lastBlockNumber   uint64
 	log               *logan.Entry
 }

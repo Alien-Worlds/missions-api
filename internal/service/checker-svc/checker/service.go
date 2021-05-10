@@ -2,17 +2,19 @@ package checker
 
 import (
 	"context"
-	eth "github.com/ethereum/go-ethereum"
-	bind2 "github.com/ethereum/go-ethereum/accounts/abi/bind"
-	ethCommon "github.com/ethereum/go-ethereum/common"
-	ethTypes "github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum"
+	"github.com/ethereum/go-ethereum/common"
 	"math/big"
+
+	//"math/big"
 	"time"
 
 	//_ "github.com/binance-chain/bsc-static/bsc"
-	"github.com/binance-chain/bsc-static/bsc/accounts/abi/bind"
+	//"github.com/binance-chain/bsc-static/bsc/accounts/abi/bind"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	//_ "github.com/binance-chain/bsc-static/bsc/common"
-	"github.com/binance-chain/bsc-static/bsc/core/types"
+	"github.com/ethereum/go-ethereum/core/types"
+	//"github.com/binance-chain/bsc-static/bsc/core/types"
 	//_ "github.com/lib/pq"
 	"github.com/redcuckoo/bsc-checker-events/internal/contracts"
 	"github.com/redcuckoo/bsc-checker-events/internal/data"
@@ -24,52 +26,61 @@ func (s *Service) Run(ctx context.Context) {
 	s.log.Info("Running checker service")
 
 	running.WithBackOff(ctx, s.log, "new-checker-service", func(ctx context.Context) error {
-		var ch chan<- *ethTypes.Header
-
 		if s.lastBlockNumber == 0 {
 			currentBlock, err := s.bscClient.BlockByNumber(ctx, nil)
 
-			if err != nil {
-				return errors.Wrap(err, "startup error, failed to get last block")
+			if err != nil{
+				return errors.Wrap(err, "failed to fetch current block")
 			}
 
-			s.lastBlockNumber = currentBlock.Header().Number.Uint64()
+			s.lastBlockNumber = currentBlock.NumberU64()
+			s.log.Info("Fetched start block successfully")
+			s.log.Infof("Current block ", currentBlock.Number())
+			return nil
 		}
 
-		sub, err := s.bscClient.SubscribeNewHead(ctx, ch)
+		currBlock, err := s.bscClient.BlockByNumber(ctx, nil)
+
+		if err != nil{
+			return errors.Wrap(err, "failed to fetch current block")
+		}
+
+		if s.lastBlockNumber > currBlock.NumberU64() {
+			s.log.Infof("Current block was already processed", currBlock.NumberU64())
+			return nil
+		}
+
+		s.log.Infof("Fetching events for address", common.HexToAddress(s.contractAddress.Address))
+
+		logs, err := s.bscClient.FilterLogs(ctx, ethereum.FilterQuery{
+			FromBlock: big.NewInt(int64(s.lastBlockNumber)),
+			ToBlock: currBlock.Number(),
+			Addresses: []common.Address{
+				common.HexToAddress(s.contractAddress.Address),
+			},
+		})
 
 		if err != nil {
-			return errors.Wrap(err, "subscription on blockchain head failed")
+			return errors.Wrap(err, "failed to set filter query for filter logs")
 		}
 
-		for c := range ch {
-			logs, err := s.bscClient.FilterLogs(ctx, eth.FilterQuery{
-				FromBlock: big.NewInt(int64(c.Number.Uint64() + 1)),
-				Addresses: []ethCommon.Address{
-					ethCommon.Address(s.contractAddress),
-				},
-			})
+		s.lastBlockNumber = currBlock.NumberU64() + 1
 
-			if err != nil {
-				return errors.Wrap(err, "failed to set filter query for filter logs")
-			}
-			err = s.process(ctx, logs)
-			if err != nil {
-				return errors.Wrap(err, "failed to process events")
-			}
-
+		err = s.process(ctx, logs)
+		if err != nil {
+			return errors.Wrap(err, "failed to process events")
 		}
 
-		sub.Unsubscribe()
 		return nil
 	}, 5*time.Second, 30*time.Second, time.Minute)
 }
 
-func (s *Service) process(ctx context.Context, logs []ethTypes.Log) error {
+func (s *Service) process(ctx context.Context, logs []types.Log) error {
+	s.log.Infof("Running process(), logs amount", len(logs))
 	for _, event := range logs {
-		err := s.processTransfer(ctx, types.Log(event))
+		err := s.processEvent(ctx, event)
 		if err != nil {
-			s.log.WithError(err).Error("failed to process transfer")
+			s.log.WithError(err).Error("failed to process event")
 			continue
 		}
 	}
@@ -77,11 +88,13 @@ func (s *Service) process(ctx context.Context, logs []ethTypes.Log) error {
 	return nil
 }
 
-func (s *Service) processTransfer(ctx context.Context, event types.Log) error {
-	spaceshipToken, err := SpaceshipStaking.NewSpaceshipStaking(ethCommon.Address(s.contractAddress), &s.bscClient)
+func (s *Service) processEvent(ctx context.Context, event types.Log) error {
+	spaceshipToken, err := SpaceshipStaking.NewSpaceshipStaking(common.HexToAddress(s.contractAddress.Address), &s.bscClient)
 	if err != nil {
 		return errors.Wrap(err, "failed init new SpaceshipStaking")
 	}
+
+	s.log.Infof("Started processing some received events")
 
 	if event.Topics == nil {
 		return nil
@@ -95,14 +108,17 @@ func (s *Service) processTransfer(ctx context.Context, event types.Log) error {
 
 	switch event.Topics[0].String() {
 	case s.eventsConfig.MissionCreatedHash:
-		missionCreated, err := spaceshipToken.ParseMissionCreated(ethTypes.Log(event))
+		s.log.Info("Started parsing MissionCreated event")
+
+		missionCreated, err := spaceshipToken.ParseMissionCreated(event)
 		if err != nil {
 			return errors.Wrap(err, "failed parse mission created")
 		}
-		mission, err := spaceshipToken.Missions((*bind2.CallOpts)(&bind.CallOpts{}), missionCreated.Id)
+		mission, err := spaceshipToken.Missions(&bind.CallOpts{}, missionCreated.Id)
 		if err != nil {
 			return errors.Wrap(err, "failed get info about mission created")
 		}
+
 		missionDB := data.Mission{
 			MissionId:     missionCreated.Id.Uint64(),
 			Description:   mission.Description,
@@ -120,6 +136,7 @@ func (s *Service) processTransfer(ctx context.Context, event types.Log) error {
 			NftTokenURI:   mission.NftInfo.TokenURI,
 		}
 
+		s.log.Info(missionDB)
 		//TODO: mission check
 		_, err = s.missionQ.Insert(missionDB)
 		if err != nil {
@@ -127,18 +144,19 @@ func (s *Service) processTransfer(ctx context.Context, event types.Log) error {
 		}
 
 		s.log.WithField("mission_id", missionDB.MissionId).Info("Success get mission")
+		return nil
 	case s.eventsConfig.MissionJoinedHash:
-		missionJoined, err := spaceshipToken.ParseMissionJoined(ethTypes.Log(event))
+		missionJoined, err := spaceshipToken.ParseMissionJoined(types.Log(event))
 		if err != nil {
 			return errors.Wrap(err, "failed parse mission joined")
 		}
-		mission, err := spaceshipToken.Missions((*bind2.CallOpts)(&bind.CallOpts{}), missionJoined.MissionId)
+		mission, err := spaceshipToken.Missions(&bind.CallOpts{}, missionJoined.MissionId)
 
 		if err != nil {
 			return errors.Wrap(err, "failed get info about mission joined")
 		}
 
-		investINFO, err := spaceshipToken.MissionToUsersInvest((*bind2.CallOpts)(&bind.CallOpts{}),missionJoined.MissionId, missionJoined.Player)
+		investINFO, err := spaceshipToken.MissionToUsersInvest(&bind.CallOpts{}, missionJoined.MissionId, missionJoined.Player)
 
 		explorerMissionDB := data.ExplorerMission{
 			Explorer:      missionJoined.Player.String(),
@@ -185,11 +203,11 @@ func (s *Service) processTransfer(ctx context.Context, event types.Log) error {
 
 		s.log.WithField("mission_id", missionDB.MissionId).Info("Success get mission joined")
 	case s.eventsConfig.RewardWithdrawnHash:
-		rewardWithdrawn, err := spaceshipToken.ParseRewardWithdrawn(ethTypes.Log(event))
+		rewardWithdrawn, err := spaceshipToken.ParseRewardWithdrawn(types.Log(event))
 		if err != nil {
 			return errors.Wrap(err, "failed parse reward withdrawn")
 		}
-		mission, err := spaceshipToken.Missions((*bind2.CallOpts)(&bind.CallOpts{}), rewardWithdrawn.MissionId)
+		mission, err := spaceshipToken.Missions(&bind.CallOpts{}, rewardWithdrawn.MissionId)
 		if err != nil {
 			return errors.Wrap(err, "failed get info about mission ")
 		}
@@ -252,8 +270,6 @@ func (s *Service) processTransfer(ctx context.Context, event types.Log) error {
 	//	NumberBlock:   int64(event.BlockNumber),
 	//	Signers:       pq.StringArray{},
 	//}
-
-
 
 	//conflict, err := s.withdrawQ.FilterByTxHashEth(event.TxHash.String()).Get()
 	//if err != nil {
