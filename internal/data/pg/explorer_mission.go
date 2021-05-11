@@ -11,7 +11,7 @@ import (
 
 const tableExplorerMission = "explorer_mission"
 
-func NewExplorerMissionQ(db *pgdb.DB) data.ExplorerMissionQ{
+func NewExplorerMissionQ(db *pgdb.DB) data.ExplorerMissionQ {
 	return &explorerMissionQ{
 		db:  db.Clone(),
 		sql: squirrel.Select("*").From(tableExplorerMission),
@@ -74,12 +74,12 @@ func (d *explorerMissionQ) Update(explorerMission data.ExplorerMission) (data.Ex
 	return explorerMission, err
 }
 
-func (d *explorerMissionQ) FilterByMission(missionId uint64) data.ExplorerMissionQ {
+func (d *explorerMissionQ) FilterByMission(missionId int64) data.ExplorerMissionQ {
 	d.sql = d.sql.Where(squirrel.Eq{"mission": missionId})
 	return d
 }
 
-func (d *explorerMissionQ) FilterByExplorer(explorerId uint64) data.ExplorerMissionQ {
+func (d *explorerMissionQ) FilterByExplorer(explorerId int64) data.ExplorerMissionQ {
 	d.sql = d.sql.Where(squirrel.Eq{"explorer": explorerId})
 	return d
 }

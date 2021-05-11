@@ -3,10 +3,10 @@
 CREATE TABLE explorer_mission
 (
     explorer_mission_id BIGINT GENERATED ALWAYS AS IDENTITY,
-    explorer          BIGINT     NOT NULL,
-    mission           BIGINT     NOT NULL,
-    withdrawn         Boolean NOT NULL,
-    number_ships       BIGINT  NOT NULL,
+    explorer            BIGINT  NOT NULL,
+    mission             BIGINT  NOT NULL,
+    withdrawn           Boolean NOT NULL,
+    number_ships        BIGINT  NOT NULL,
     total_stake_tlm     BIGINT  NOT NULL,
     total_stake_bnb     BIGINT  NOT NULL,
     PRIMARY KEY (explorer_mission_id),

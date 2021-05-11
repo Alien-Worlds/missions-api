@@ -158,6 +158,8 @@ func (s *Service) processEvent(ctx context.Context, event types.Log) error {
 			return errors.Wrap(err, "failed get info about mission joined")
 		}
 
+		s.log.Infof("Invest info: ", investINFO)
+
 		//updating mission table
 		missionDB, err := s.missionQ.FilterById(0).Get()
 		//missionDB, err := s.missionQ.FilterById(missionJoined.MissionId.Uint64()).Get()
@@ -179,6 +181,8 @@ func (s *Service) processEvent(ctx context.Context, event types.Log) error {
 			missionDB.TotalShips += investINFO.Ships.Int64()
 
 			_, err = s.missionQ.Update(*missionDB)
+
+			s.log.Info("Updated mission")
 
 			if err != nil {
 				return errors.Wrap(err, "failed update db, mission")
@@ -222,8 +226,8 @@ func (s *Service) processEvent(ctx context.Context, event types.Log) error {
 		}
 
 		if explorer != nil {
-			explorerDB.TotalStakeTLM += missionFromContract.SpaceshipCost.Int64() * investINFO.Ships.Int64()
-			explorerDB.TotalStakeBNB += explorer.TotalStakeBNB + investINFO.BNBAmount.Int64()
+			explorerDB.TotalStakeTLM = explorer.TotalStakeTLM + missionFromContract.SpaceshipCost.Int64() * investINFO.Ships.Int64()
+			explorerDB.TotalStakeBNB = explorer.TotalStakeBNB + investINFO.BNBAmount.Int64()
 
 			_, err = s.explorerQ.Update(explorerDB)
 
@@ -239,7 +243,13 @@ func (s *Service) processEvent(ctx context.Context, event types.Log) error {
 		}
 
 		//updating explorer-mission table
-		explorerMissionFromDB, err := s.explorer_missionQ.FilterByMission(missionJoined.MissionId.Uint64()).FilterByExplorer(explorerDB.ExplorerId).Get()
+		explorerMissionFromDB, err := s.explorer_missionQ.FilterByMission(missionJoined.MissionId.Int64()).FilterByExplorer(int64(explorerDB.ExplorerId + 1)).Get()
+
+		//s.log.Info(s.explorer_missionQ.FilterByMission(missionJoined.MissionId.Int64()).Select())
+
+
+		s.log.Info(explorerMissionFromDB)
+		//s.log.Info(s.explorer_missionQ.FilterByExplorer(int64(explorerDB.ExplorerId + 1)).Get())
 
 		if err != nil {
 			return errors.Wrap(err, "failed update db, explorer-mission")
@@ -249,7 +259,7 @@ func (s *Service) processEvent(ctx context.Context, event types.Log) error {
 
 		if explorerMissionFromDB == nil {
 			explorerMissionDB = data.ExplorerMission{
-				Explorer: int64(explorer.ExplorerId),
+				Explorer: int64(explorerDB.ExplorerId + 1),
 				Mission:       missionJoined.MissionId.Int64(),
 				Withdrawn:     false,
 				NumberShips:   investINFO.Ships.Int64(),
@@ -264,11 +274,11 @@ func (s *Service) processEvent(ctx context.Context, event types.Log) error {
 			}
 
 		} else {
-			explorerMissionDB.NumberShips += investINFO.Ships.Int64()
-			explorerMissionDB.TotalStakeTLM = explorerMissionDB.NumberShips * missionDB.SpaceshipCost
-			explorerMissionDB.TotalStakeBNB += investINFO.BNBAmount.Int64()
+			explorerMissionFromDB.NumberShips += investINFO.Ships.Int64()
+			explorerMissionFromDB.TotalStakeTLM = explorerMissionFromDB.NumberShips * missionDB.SpaceshipCost
+			explorerMissionFromDB.TotalStakeBNB += investINFO.BNBAmount.Int64()
 
-			_, err = s.explorer_missionQ.Update(explorerMissionDB)
+			_, err = s.explorer_missionQ.Update(*explorerMissionFromDB)
 
 			if err != nil {
 				return errors.Wrap(err, "failed update db, explorer-mission")

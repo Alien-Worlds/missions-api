@@ -9,8 +9,8 @@ type ExplorerMissionQ interface {
 	Insert(explorerMission ExplorerMission) (ExplorerMission, error)
 	Update(explorerMission ExplorerMission) (ExplorerMission, error)
 
-	FilterByMission(missionId uint64) ExplorerMissionQ
-	FilterByExplorer(explorerId uint64) ExplorerMissionQ
+	FilterByMission(missionId int64) ExplorerMissionQ
+	FilterByExplorer(explorerId int64) ExplorerMissionQ
 }
 
 type ExplorerMission struct{
