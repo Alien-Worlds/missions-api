@@ -2,7 +2,6 @@ package pg
 
 import (
 	"database/sql"
-	"strings"
 
 	"github.com/Masterminds/squirrel"
 	"github.com/fatih/structs"
@@ -10,7 +9,7 @@ import (
 	"gitlab.com/distributed_lab/kit/pgdb"
 )
 
-const tableExplorer = "Explorer"
+const tableExplorer = "explorer"
 
 func NewExplorerQ(db *pgdb.DB) data.ExplorerQ{
 	return &explorerQ{
@@ -30,7 +29,7 @@ func (d *explorerQ) New() data.ExplorerQ {
 
 func (d *explorerQ) Get() (*data.Explorer, error) {
 	var result data.Explorer
-	err := d.db.Exec(d.sql)
+	err := d.db.Get(&result, d.sql)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}
@@ -48,32 +47,9 @@ func (d *explorerQ) Select() ([]data.Explorer, error) {
 	return result, err
 }
 
-func (d *explorerQ) SelectTotalTLM(explorerId string) (*data.Explorer, error) {
-	var result *data.Explorer
-	var sb strings.Builder
-	sb.WriteString("SELECT totalStakeTLM from Explorer where explorerId=")
-	sb.WriteString(explorerId)
-	sb.WriteString(";")
-	err := d.db.Select(&result, squirrel.Select(sb.String()).From(tableExplorer))
-	if err == sql.ErrNoRows {
-		return nil, nil
-	}
-
-	return result, err
-}
-
-func (d *explorerQ) SelectTotalBNB(explorerId string) (*data.Explorer, error) {
-	var result *data.Explorer
-	var sb strings.Builder
-	sb.WriteString("SELECT totalStakeBNB from Explorer where explorerId=")
-	sb.WriteString(explorerId)
-	sb.WriteString(";")
-	err := d.db.Select(&result, squirrel.Select(sb.String()).From(tableExplorer))
-	if err == sql.ErrNoRows {
-		return nil, nil
-	}
-
-	return result, err
+func (d *explorerQ) FilterByAddress(explorerAddress string) data.ExplorerQ {
+	d.sql = d.sql.Where(squirrel.Eq{"explorer_address": explorerAddress})
+	return d
 }
 
 func (d *explorerQ) Insert(explorer data.Explorer) (data.Explorer, error) {
@@ -93,7 +69,7 @@ func (d *explorerQ) Insert(explorer data.Explorer) (data.Explorer, error) {
 func (d *explorerQ) Update(explorer data.Explorer) (data.Explorer, error) {
 	clauses := structs.Map(explorer)
 
-	query := squirrel.Update(tableExplorer).Where(squirrel.Eq{"id": explorer.ExplorerId}).SetMap(clauses).Suffix("returning *")
+	query := squirrel.Update(tableExplorer).Where(squirrel.Eq{"explorer_address": explorer.ExplorerAddress}).SetMap(clauses).Suffix("returning *")
 
 	err := d.db.Get(&explorer, query)
 	if err != nil {

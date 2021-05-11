@@ -9,7 +9,7 @@ import (
 	"gitlab.com/distributed_lab/kit/pgdb"
 )
 
-const tableMission = "Mission"
+const tableMission = "mission"
 
 func NewMissionQ(db *pgdb.DB) data.MissionQ{
 	return &missionQ{
@@ -29,7 +29,7 @@ func (d *missionQ) New() data.MissionQ {
 
 func (d *missionQ) Get() (*data.Mission, error) {
 	var result data.Mission
-	err := d.db.Exec(d.sql)
+	err := d.db.Get(&result, d.sql)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}
@@ -64,7 +64,7 @@ func (d *missionQ) Insert(mission data.Mission) (data.Mission, error) {
 func (d *missionQ) Update(mission data.Mission) (data.Mission, error) {
 	clauses := structs.Map(mission)
 
-	query := squirrel.Update(tableMission).Where(squirrel.Eq{"id": mission.MissionId}).SetMap(clauses).Suffix("returning *")
+	query := squirrel.Update(tableMission).Where(squirrel.Eq{"mission_id": mission.MissionId}).SetMap(clauses).Suffix("returning *")
 
 	err := d.db.Get(&mission, query)
 	if err != nil {
@@ -72,4 +72,9 @@ func (d *missionQ) Update(mission data.Mission) (data.Mission, error) {
 	}
 
 	return mission, err
+}
+
+func (d *missionQ) FilterById(missionId uint64) data.MissionQ {
+	d.sql = d.sql.Where(squirrel.Eq{"mission_id": missionId})
+	return d
 }
