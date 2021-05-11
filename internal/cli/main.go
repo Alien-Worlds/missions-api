@@ -1,8 +1,10 @@
 package cli
 
 import (
+    "context"
     "github.com/alecthomas/kingpin"
     "github.com/redcuckoo/bsc-checker-events/internal/config"
+    checker2 "github.com/redcuckoo/bsc-checker-events/internal/service/checker-svc/checker"
     "gitlab.com/distributed_lab/kit/kv"
     "gitlab.com/distributed_lab/logan/v3"
 )
@@ -23,6 +25,7 @@ func Run(args []string) bool {
 
     runCmd := app.Command("run", "run command")
     serviceCmd := runCmd.Command("service", "run service") // you can insert custom help
+    checkerCmd := serviceCmd.Command("checker", "run checker service")
 
     migrateCmd := app.Command("migrate", "migrate command")
     migrateUpCmd := migrateCmd.Command("up", "migrate db up")
@@ -36,12 +39,12 @@ func Run(args []string) bool {
         return false
     }
 
-    //ctx := context.Background();
+    ctx := context.Background()
 
     switch cmd {
-    case serviceCmd.FullCommand():
-    //    svc := checker_events.New(cfg)
-    //    svc.Run(ctx)
+    case checkerCmd.FullCommand():
+        svc := checker2.New(cfg)
+        svc.Run(ctx)
         return true
     case migrateUpCmd.FullCommand():
         err = MigrateUp(cfg)

@@ -1,10 +1,10 @@
 package cli
 
 import (
-    migrate "github.com/rubenv/sql-migrate"
-    "gitlab.com/distributed_lab/logan/v3/errors"
     "github.com/redcuckoo/bsc-checker-events/internal/assets"
     "github.com/redcuckoo/bsc-checker-events/internal/config"
+    migrate "github.com/rubenv/sql-migrate"
+    "gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 var migrations = &migrate.PackrMigrationSource{
