@@ -1,13 +1,14 @@
 -- +migrate Up
 
-CREATE TABLE Explorer
+CREATE TABLE explorer
 (
-    explorerId    INT GENERATED ALWAYS AS IDENTITY,
-    totalStakeTLM BigInt NOT NULL,
-    totalStakeBNB BigInt NOT NULL,
-    PRIMARY KEY (explorerId)
+    explorer_id    BIGINT GENERATED ALWAYS AS IDENTITY,
+    explorer_address TEXT NOT NULL UNIQUE,
+    total_stake_tlm BIGINT NOT NULL,
+    total_stake_bnb BIGINT NOT NULL,
+    PRIMARY KEY (explorer_id)
 );
 
 -- +migrate Down
 
-DROP TABLE Explorer;
+DROP TABLE explorer;

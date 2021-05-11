@@ -2,7 +2,7 @@
 
 CREATE TABLE mission
 (
-    mission_id     BIGINT,
+    mission_id     BIGINT UNIQUE,
     description   VARCHAR(255),
     name          VARCHAR(100) NOT NULL,
     boarding_time  BIGINT          NOT NULL,
