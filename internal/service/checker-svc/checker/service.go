@@ -100,6 +100,8 @@ func (s *Service) processEvent(ctx context.Context, event types.Log) error {
 		return nil
 	}
 
+	s.log.Infof("Events topic", event.Topics[0])
+
 	if event.Topics[0].String() != s.eventsConfig.MissionCreatedHash &&
 		event.Topics[0].String() != s.eventsConfig.MissionJoinedHash &&
 		event.Topics[0].String() != s.eventsConfig.RewardWithdrawnHash {
@@ -287,42 +289,119 @@ func (s *Service) processEvent(ctx context.Context, event types.Log) error {
 
 		s.log.WithField("mission_id", missionDB.MissionId).Info("Success get mission joined")
 	case s.eventsConfig.RewardWithdrawnHash:
-		//rewardWithdrawn, err := spaceshipToken.ParseRewardWithdrawn(event)
-		//
-		//if err != nil {
-		//	return errors.Wrap(err, "failed parse reward withdrawn")
-		//}
-		//
-		//explorer, err := s.explorerQ.FilterByAddress(rewardWithdrawn.Player.String()).Get()
-		//
-		//if err != nil {
-		//	return errors.Wrap(err, "failed fetch info from db, table explorer, explorer")
-		//}
-		//
-		//
-		//explorerMission, err := s.explorer_missionQ.FilterByMission(rewardWithdrawn.MissionId.Uint64()).FilterByExplorer(ex).Get()
-		//
-		//if err != nil {
-		//	return errors.Wrap(err, "failed get info about mission-explorer")
-		//}
-		//
-		//explorerMissionDB := data.ExplorerMission{
-		//	ExplorerMissionId: explorerMission.ExplorerMissionId,
-		//	Explorer:          explorerMission.Explorer,
-		//	Mission:           explorerMission.Mission,
-		//	Withdrawn:         true,
-		//	NumberShips:       explorerMission.NumberShips,
-		//	TotalStakeTLM:     explorerMission.TotalStakeTLM,
-		//	TotalStakeBNB:     explorerMission.TotalStakeBNB,
-		//}
-		//
-		//_, err = s.explorer_missionQ.Update(explorerMissionDB)
-		//
-		//if err != nil {
-		//	return errors.Wrap(err, "failed to update explorer-mission to db")
-		//}
-		//
-		//s.log.WithField("mission_id", explorerMission.Mission).Info("Success get reward withdrawn")
+		rewardWithdrawn, err := spaceshipToken.ParseRewardWithdrawn(event)
+
+		if err != nil {
+			return errors.Wrap(err, "failed parse reward withdrawn")
+		}
+
+		mission, err := s.missionQ.FilterById(rewardWithdrawn.MissionId.Uint64()).Get()
+
+		if err != nil {
+			return errors.Wrap(err, "failed fetch info from db, table mission, mission")
+		}
+
+		var missionDB data.Mission
+
+		missionToUserInvest, err := spaceshipToken.MissionToUsersInvest(&bind.CallOpts{}, rewardWithdrawn.MissionId,rewardWithdrawn.Player)
+
+		if err != nil{
+			return errors.Wrap(err, "failed fetch info from blockchain, user invest info")
+		}
+
+		if mission == nil{
+			mission, err := spaceshipToken.Missions(&bind.CallOpts{}, rewardWithdrawn.MissionId)
+
+			if err != nil {
+				return errors.Wrap(err, "failed fetch info from blockchain, mission, explorer")
+			}
+
+			missionDB = data.Mission{
+				MissionId:     rewardWithdrawn.MissionId.Uint64(),
+				Description:   mission.Description,
+				Name:          mission.Name,
+				BoardingTime:  int64(mission.BoardingTime),
+				LaunchTime:    int64(mission.LaunchTime),
+				EndTime:       int64(mission.Duration + mission.LaunchTime),
+				Duration:      int64(mission.Duration),
+				MissionType:   int64(mission.MissionType),
+				Reward:        mission.Reward.Int64(),
+				SpaceshipCost: mission.SpaceshipCost.Int64(),
+				MissionPower:  mission.MissionPower.Int64(),
+				TotalShips:    missionToUserInvest.Ships.Int64(),
+				NftContract:   mission.NftInfo.ContractAddress.Bytes(),
+				NftTokenURI:   mission.NftInfo.TokenURI,
+			}
+
+			_, err = s.missionQ.Insert(missionDB)
+
+			if err != nil {
+				return errors.Wrap(err, "failed to insert to db, table mission")
+			}
+		}else{
+			missionDB = *mission
+		}
+
+		explorer, err := s.explorerQ.FilterByAddress(rewardWithdrawn.Player.String()).Get()
+
+		if err != nil {
+			return errors.Wrap(err, "failed fetch info from db, table explorer, explorer")
+		}
+
+		var explorerDB data.Explorer
+
+		if explorer == nil{
+			explorerDB = data.Explorer{
+				ExplorerAddress: rewardWithdrawn.Player.String(),
+				TotalStakeTLM: missionDB.SpaceshipCost * missionToUserInvest.Ships.Int64(),
+				TotalStakeBNB: missionToUserInvest.BNBAmount.Int64(),
+			}
+
+			_, err = s.explorerQ.Insert(explorerDB)
+
+			if err != nil {
+				return errors.Wrap(err, "failed to insert to db, table explorer")
+			}
+		}else{
+			explorerDB = *explorer
+		}
+
+
+		explorerMission, err := s.explorer_missionQ.FilterByMission(rewardWithdrawn.MissionId.Int64()).FilterByExplorer(int64(explorerDB.ExplorerId)).Get()
+
+		if err != nil {
+			return errors.Wrap(err, "failed get info about mission-explorer")
+		}
+
+		var explorerMissionDB data.ExplorerMission
+
+		if explorerMission == nil{
+			explorerMissionDB = data.ExplorerMission{
+				Explorer: int64(explorerDB.ExplorerId + 1),
+				Mission: int64(missionDB.MissionId),
+				Withdrawn: true,
+				NumberShips: missionToUserInvest.Ships.Int64(),
+				TotalStakeTLM: missionDB.SpaceshipCost * missionToUserInvest.Ships.Int64(),
+				TotalStakeBNB: missionToUserInvest.BNBAmount.Int64(),
+			}
+
+			_, err = s.explorer_missionQ.Insert(explorerMissionDB)
+
+			if err != nil {
+				return errors.Wrap(err, "failed to insert to db, explorer-mission")
+			}
+		}else{
+			explorerMissionDB = *explorerMission
+			explorerMissionDB.Withdrawn = true
+
+			_, err = s.explorer_missionQ.Update(explorerMissionDB)
+
+			if err != nil {
+				return errors.Wrap(err, "failed to update db, explorer-mission")
+			}
+		}
+
+		s.log.WithField("mission_id", explorerMissionDB.Mission).Info("Success get reward withdrawn")
 	default:
 		return nil
 	}
