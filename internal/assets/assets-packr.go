@@ -5,4 +5,4 @@
 // and any other packr generated files.
 package assets
 
-import _ "github.com/redcuckoo/bsc-checker-events/packrd"
+import _ "github.com/redcuckoo/bsc-checker-events/internal/assets/packrd"
