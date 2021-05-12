@@ -26,18 +26,18 @@ func (s *Service) Run(ctx context.Context) {
 	s.log.Info("Running checker service")
 
 	running.WithBackOff(ctx, s.log, "new-checker-service", func(ctx context.Context) error {
-		//if s.lastBlockNumber == 0 {
-		//	currentBlock, err := s.bscClient.BlockByNumber(ctx, nil)
-		//
-		//	if err != nil {
-		//		return errors.Wrap(err, "failed to fetch current block")
-		//	}
-		//
-		//	s.lastBlockNumber = currentBlock.NumberU64()
-		//	s.log.Info("Fetched start block successfully")
-		//	s.log.Infof("Current block ", currentBlock.Number())
-		//	return nil
-		//}
+		if s.lastBlockNumber == 0 {
+			currentBlock, err := s.bscClient.BlockByNumber(ctx, nil)
+
+			if err != nil {
+				return errors.Wrap(err, "failed to fetch current block")
+			}
+
+			s.lastBlockNumber = currentBlock.NumberU64()
+			s.log.Info("Fetched start block successfully")
+			s.log.Infof("Current block ", currentBlock.Number())
+			return nil
+		}
 
 		currBlock, err := s.bscClient.BlockByNumber(ctx, nil)
 
@@ -46,7 +46,7 @@ func (s *Service) Run(ctx context.Context) {
 		}
 
 		if s.lastBlockNumber > currBlock.NumberU64() {
-			s.log.Infof("Current block was already processed", currBlock.NumberU64())
+			//s.log.Infof("Current block was already processed", currBlock.NumberU64())
 			return nil
 		}
 
@@ -93,17 +93,10 @@ func (s *Service) processEvent(ctx context.Context, event types.Log) error {
 	if err != nil {
 		return errors.Wrap(err, "failed init new SpaceshipStaking")
 	}
-	mission_check, err := s.missionQ.FilterById(1).Get()
-
-	s.log.Infof("CHECK", mission_check)
-
-	s.log.Infof("Started processing some received events")
 
 	if event.Topics == nil {
 		return nil
 	}
-
-	s.log.Infof("Events topic", event.Topics[0])
 
 	if event.Topics[0].String() != s.eventsConfig.MissionCreatedHash &&
 		event.Topics[0].String() != s.eventsConfig.MissionJoinedHash &&
@@ -243,13 +236,12 @@ func (s *Service) processMissionJoined(event types.Log, spaceshipToken *Spaceshi
 		return errors.Wrap(err, "failed fetch info from db, table mission, mission")
 	}
 
-
 	if missionDB != nil {
 		missionDB.MissionPower = missionFromContract.MissionPower.Int64()
 
-		if explorerMissionDB == nil{
+		if explorerMissionDB == nil {
 			missionDB.TotalShips += investINFO.Ships.Int64()
-		}else{
+		} else {
 			missionDB.TotalShips = (missionDB.TotalShips - explorerMissionDB.NumberShips) + investINFO.Ships.Int64()
 		}
 
@@ -270,12 +262,12 @@ func (s *Service) processMissionJoined(event types.Log, spaceshipToken *Spaceshi
 	}
 
 	if explorer != nil {
-		if explorerMissionDB == nil{
-			explorerDB.TotalStakeTLM = explorer.TotalStakeTLM + missionFromContract.SpaceshipCost.Int64() * investINFO.Ships.Int64()
-			explorerDB.TotalStakeBNB = explorer.TotalStakeBNB  + investINFO.BNBAmount.Int64()
-		}else{
-			explorerDB.TotalStakeTLM = (explorer.TotalStakeTLM - explorerMissionDB.TotalStakeTLM) + missionFromContract.SpaceshipCost.Int64() * investINFO.Ships.Int64()
-			explorerDB.TotalStakeBNB =  (explorer.TotalStakeBNB - explorerMissionDB.TotalStakeBNB) + investINFO.BNBAmount.Int64()
+		if explorerMissionDB == nil {
+			explorerDB.TotalStakeTLM = explorer.TotalStakeTLM + missionFromContract.SpaceshipCost.Int64()*investINFO.Ships.Int64()
+			explorerDB.TotalStakeBNB = explorer.TotalStakeBNB + investINFO.BNBAmount.Int64()
+		} else {
+			explorerDB.TotalStakeTLM = (explorer.TotalStakeTLM - explorerMissionDB.TotalStakeTLM) + missionFromContract.SpaceshipCost.Int64()*investINFO.Ships.Int64()
+			explorerDB.TotalStakeBNB = (explorer.TotalStakeBNB - explorerMissionDB.TotalStakeBNB) + investINFO.BNBAmount.Int64()
 		}
 
 		_, err = s.explorerQ.Update(explorerDB)
@@ -299,12 +291,12 @@ func (s *Service) processMissionJoined(event types.Log, spaceshipToken *Spaceshi
 
 	if explorerMissionDB == nil {
 		explorerMissionDB := data.ExplorerMission{
-			Explorer: int64(explorerDBNew.ExplorerId),
-			Mission : missionJoined.MissionId.Int64(),
-			Withdrawn:false,
-			NumberShips: investINFO.Ships.Int64(),
+			Explorer:      int64(explorerDBNew.ExplorerId),
+			Mission:       missionJoined.MissionId.Int64(),
+			Withdrawn:     false,
+			NumberShips:   investINFO.Ships.Int64(),
 			TotalStakeTLM: investINFO.Ships.Int64() * missionFromContract.SpaceshipCost.Int64(),
-			TotalStakeBNB:investINFO.BNBAmount.Int64(),
+			TotalStakeBNB: investINFO.BNBAmount.Int64(),
 		}
 
 		_, err = s.explorer_missionQ.Insert(explorerMissionDB)
@@ -335,45 +327,36 @@ func (s *Service) processRewardWithdrawn(event types.Log, spaceshipToken *Spaces
 	rewardWithdrawn, err := spaceshipToken.ParseRewardWithdrawn(event)
 
 	if err != nil {
-		s.log.Info("ERROR!!!!!1")
 		return errors.Wrap(err, "failed parse reward withdrawn")
 	}
 
 	missionDB, err := s.missionQ.FilterById(rewardWithdrawn.MissionId.Int64()).Get()
 
 	if err != nil {
-		s.log.Info("ERROR!!!!!2")
 		return errors.Wrap(err, "failed fetch info from db, table mission, mission")
 	}
 
 	if missionDB == nil {
-		s.log.Info("ERROR!!!!!3")
 		return errors.Wrap(err, "failed record withdraw, such mission is not in db, resynchronize")
 	}
 
 	explorerDB, err := s.explorerQ.FilterByAddress(rewardWithdrawn.Player.String()).Get()
 
 	if err != nil {
-		s.log.Info("ERROR!!!!!4")
 		return errors.Wrap(err, "failed fetch info from db, table explorer, explorer")
 	}
 
 	if explorerDB == nil {
-		s.log.Info("ERROR!!!!!5")
 		return errors.Wrap(err, "failed record withdraw, such explorer is not in db, resynchronize")
 	}
-
-	s.log.Infof("Before error", rewardWithdrawn.MissionId, explorerDB.ExplorerId)
 
 	explorerMissionDB, err := s.explorer_missionQ.FilterByMission(rewardWithdrawn.MissionId.Int64()).FilterByExplorer(int64(explorerDB.ExplorerId)).Get()
 
 	if err != nil {
-		s.log.Info("ERROR!!!!!6")
 		return errors.Wrap(err, "failed get info about mission-explorer")
 	}
 
 	if explorerMissionDB == nil {
-		s.log.Info("ERROR!!!!!7")
 		return errors.Wrap(err, "failed record withdraw, such explorer-mission connection is not in db, resynchronize")
 	} else {
 		explorerMissionDB.Withdrawn = true
@@ -381,7 +364,6 @@ func (s *Service) processRewardWithdrawn(event types.Log, spaceshipToken *Spaces
 		_, err = s.explorer_missionQ.Update(*explorerMissionDB)
 
 		if err != nil {
-			s.log.Info("ERROR!!!!!8")
 			return errors.Wrap(err, "failed to update db, explorer-mission")
 		}
 	}
