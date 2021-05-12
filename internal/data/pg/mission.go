@@ -2,7 +2,6 @@ package pg
 
 import (
 	"database/sql"
-
 	"github.com/Masterminds/squirrel"
 	"github.com/fatih/structs"
 	"github.com/redcuckoo/bsc-checker-events/internal/data"
@@ -29,10 +28,15 @@ func (d *missionQ) New() data.MissionQ {
 
 func (d *missionQ) Get() (*data.Mission, error) {
 	var result data.Mission
+
 	err := d.db.Get(&result, d.sql)
+
 	if err == sql.ErrNoRows {
+		d.sql =  squirrel.Select("*").From(tableMission)
 		return nil, nil
 	}
+
+	d.sql =  squirrel.Select("*").From(tableMission)
 
 	return &result, err
 }

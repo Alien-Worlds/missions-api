@@ -31,9 +31,11 @@ func (d *explorerQ) Get() (*data.Explorer, error) {
 	var result data.Explorer
 	err := d.db.Get(&result, d.sql)
 	if err == sql.ErrNoRows {
+		d.sql =  squirrel.Select("*").From(tableExplorer)
 		return nil, nil
 	}
 
+	d.sql =  squirrel.Select("*").From(tableExplorer)
 	return &result, err
 }
 
