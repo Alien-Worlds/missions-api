@@ -9,7 +9,7 @@ type MissionQ interface {
 	Insert(mission Mission) (Mission, error)
 	Update(mission Mission) (Mission, error)
 
-	FilterById(missionId uint64) MissionQ
+	FilterById(missionId int64) MissionQ
 }
 
 type Mission struct{

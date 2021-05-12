@@ -74,7 +74,7 @@ func (d *missionQ) Update(mission data.Mission) (data.Mission, error) {
 	return mission, err
 }
 
-func (d *missionQ) FilterById(missionId uint64) data.MissionQ {
+func (d *missionQ) FilterById(missionId int64) data.MissionQ {
 	d.sql = d.sql.Where(squirrel.Eq{"mission_id": missionId})
 	return d
 }
