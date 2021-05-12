@@ -2,19 +2,18 @@ package pg
 
 import (
 	"database/sql"
-
 	"github.com/Masterminds/squirrel"
 	"github.com/fatih/structs"
 	"github.com/redcuckoo/bsc-checker-events/internal/data"
 	"gitlab.com/distributed_lab/kit/pgdb"
 )
 
-const tableExplorerMission = "ExplorerMission"
+const tableExplorerMission = "explorer_mission"
 
-func NewExplorerMissionQ(db *pgdb.DB) data.ExplorerMissionQ{
+func NewExplorerMissionQ(db *pgdb.DB) data.ExplorerMissionQ {
 	return &explorerMissionQ{
 		db:  db.Clone(),
-		sql: squirrel.Select("*").From(tableExplorer),
+		sql: squirrel.Select("*").From(tableExplorerMission),
 	}
 }
 
@@ -29,11 +28,14 @@ func (d *explorerMissionQ) New() data.ExplorerMissionQ {
 
 func (d *explorerMissionQ) Get() (*data.ExplorerMission, error) {
 	var result data.ExplorerMission
-	err := d.db.Exec(d.sql)
+	err := d.db.Get(&result, d.sql)
+
 	if err == sql.ErrNoRows {
+		d.sql =  squirrel.Select("*").From(tableExplorerMission)
 		return nil, nil
 	}
 
+	d.sql =  squirrel.Select("*").From(tableExplorerMission)
 	return &result, err
 }
 
@@ -64,7 +66,7 @@ func (d *explorerMissionQ) Insert(explorerMission data.ExplorerMission) (data.Ex
 func (d *explorerMissionQ) Update(explorerMission data.ExplorerMission) (data.ExplorerMission, error) {
 	clauses := structs.Map(explorerMission)
 
-	query := squirrel.Update(tableExplorerMission).Where(squirrel.Eq{"id": explorerMission.ExplorerMissionId}).SetMap(clauses).Suffix("returning *")
+	query := squirrel.Update(tableExplorerMission).Where(squirrel.Eq{"explorer_mission_id": explorerMission.ExplorerMissionId}).SetMap(clauses).Suffix("returning *")
 
 	err := d.db.Get(&explorerMission, query)
 	if err != nil {
@@ -72,4 +74,14 @@ func (d *explorerMissionQ) Update(explorerMission data.ExplorerMission) (data.Ex
 	}
 
 	return explorerMission, err
+}
+
+func (d *explorerMissionQ) FilterByMission(missionId int64) data.ExplorerMissionQ {
+	d.sql = d.sql.Where(squirrel.Eq{"mission": missionId})
+	return d
+}
+
+func (d *explorerMissionQ) FilterByExplorer(explorerId int64) data.ExplorerMissionQ {
+	d.sql = d.sql.Where(squirrel.Eq{"explorer": explorerId})
+	return d
 }

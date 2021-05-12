@@ -1,7 +1,7 @@
 package config
 
 import (
-	bscClient "github.com/binance-chain/bsc/ethclient"
+	bscClient "github.com/ethereum/go-ethereum/ethclient"
 	"gitlab.com/distributed_lab/figure"
 	"gitlab.com/distributed_lab/kit/kv"
 	"gitlab.com/distributed_lab/logan/v3/errors"

@@ -4,17 +4,18 @@ type ExplorerQ interface {
 	New() ExplorerQ
 
 	Get() (*Explorer, error)
-	SelectTotalTLM(explorerId string) (*Explorer, error)
-	SelectTotalBNB(explorerId string) (*Explorer, error)
 
 	Select() ([]Explorer, error)
 
 	Insert(mission Explorer) (Explorer, error)
 	Update(mission Explorer) (Explorer, error)
+	
+	FilterByAddress(explorerAddress string) ExplorerQ
 }
 
 type Explorer struct{
-	ExplorerId    string
-	TotalStakeTLM uint64
-	TotalStakeBNB uint64
+	ExplorerId    uint64 `db:"explorer_id" structs:"-"`
+	ExplorerAddress string `db:"explorer_address" structs:"explorer_address"`
+	TotalStakeTLM int64 `db:"total_stake_tlm" structs:"total_stake_tlm"`
+	TotalStakeBNB int64 `db:"total_stake_bnb" structs:"total_stake_bnb"`
 }

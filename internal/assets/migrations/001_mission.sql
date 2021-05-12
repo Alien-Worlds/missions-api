@@ -1,24 +1,24 @@
 -- +migrate Up
 
-CREATE TABLE Mission
+CREATE TABLE mission
 (
-    missionId     INT GENERATED ALWAYS AS IDENTITY,
-    description   VARCHAR(255),
-    name          VARCHAR(100) NOT NULL,
-    boardingTime  INT          NOT NULL,
-    launchTime    INT          NOT NULL,
-    endTime       INT          NOT NULL,
-    duration      INT          NOT NULL,
-    missionType   INT          NOT NULL,
-    reward        BigInt       NOT NULL,
-    spaceshipCost BigInt       NOT NULL,
-    missionPower  BigInt       NOT NULL,
-    totalShips    BigInt       NOT NULL,
-    nftContract   bytea        NOT NULL,
-    nftTokenURI   VARCHAR(20)  NOT NULL,
-    PRIMARY KEY (missionId)
+    mission_id     BIGINT UNIQUE,
+    description    VARCHAR(255),
+    name           VARCHAR(100) NOT NULL,
+    boarding_time  BIGINT       NOT NULL,
+    launch_time    BIGINT       NOT NULL,
+    end_time       BIGINT       NOT NULL,
+    duration       BIGINT       NOT NULL,
+    mission_type   BIGINT       NOT NULL,
+    reward         BIGINT       NOT NULL,
+    spaceship_cost BIGINT       NOT NULL,
+    mission_power  BIGINT       NOT NULL,
+    total_ships    BIGINT       NOT NULL,
+    nft_contract   bytea        NOT NULL,
+    nft_token_uri  VARCHAR(20)  NOT NULL,
+    PRIMARY KEY (mission_id)
 );
 
 -- +migrate Down
 
-DROP TABLE Mission;
+DROP TABLE mission;
