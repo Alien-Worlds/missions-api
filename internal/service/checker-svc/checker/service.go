@@ -140,9 +140,25 @@ func (s *Service) processEvent(ctx context.Context, event types.Log) error {
 
 		s.log.Info(missionDB)
 		//TODO: mission check
-		_, err = s.missionQ.Insert(missionDB)
+
+		missionCheck, err := s.missionQ.FilterById(missionDB.MissionId).Get()
+
 		if err != nil {
-			return errors.Wrap(err, "failed to insert to db")
+			return errors.Wrap(err, "failed to get from db, mission")
+		}
+
+		if missionCheck == nil{
+			_, err = s.missionQ.Insert(missionDB)
+
+			if err != nil {
+				return errors.Wrap(err, "failed to insert to db, mission")
+			}
+		}else{
+			_, err = s.missionQ.Update(missionDB)
+
+			if err != nil {
+				return errors.Wrap(err, "failed to update db, mission")
+			}
 		}
 
 		s.log.WithField("mission_id", missionDB.MissionId).Info("Success get mission created event")
