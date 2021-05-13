@@ -164,8 +164,6 @@ func (s *Service) processMissionCreated(event types.Log, spaceshipToken *Spacesh
 
 	missionCheck, err := s.missionQ.FilterById(int64(missionDB.MissionId)).Get()
 
-	s.log.Infof("mission check", missionCheck)
-
 	if err != nil {
 		return errors.Wrap(err, "failed to get from db, mission")
 	}
@@ -176,16 +174,12 @@ func (s *Service) processMissionCreated(event types.Log, spaceshipToken *Spacesh
 		if err != nil {
 			return errors.Wrap(err, "failed to insert to db, mission")
 		}
-
-		s.log.Info("Inserted mission information")
 	} else {
 		_, err = s.missionQ.Update(missionDB)
 
 		if err != nil {
 			return errors.Wrap(err, "failed to update db, mission")
 		}
-
-		s.log.Info("Updated mission information")
 	}
 
 	s.log.WithField("mission_id", missionDB.MissionId).Info("Success get mission created event")
@@ -337,7 +331,7 @@ func (s *Service) processRewardWithdrawn(event types.Log, spaceshipToken *Spaces
 	}
 
 	if missionDB == nil {
-		return errors.Wrap(err, "failed record withdraw, such mission is not in db, resynchronize")
+		return errors.New("failed record withdraw, such mission is not in db, resynchronize")
 	}
 
 	explorerDB, err := s.explorerQ.FilterByAddress(rewardWithdrawn.Player.String()).Get()
@@ -347,7 +341,7 @@ func (s *Service) processRewardWithdrawn(event types.Log, spaceshipToken *Spaces
 	}
 
 	if explorerDB == nil {
-		return errors.Wrap(err, "failed record withdraw, such explorer is not in db, resynchronize")
+		return errors.New("failed record withdraw, such explorer is not in db, resynchronize")
 	}
 
 	explorerMissionDB, err := s.explorer_missionQ.FilterByMission(rewardWithdrawn.MissionId.Int64()).FilterByExplorer(int64(explorerDB.ExplorerId)).Get()
@@ -357,7 +351,7 @@ func (s *Service) processRewardWithdrawn(event types.Log, spaceshipToken *Spaces
 	}
 
 	if explorerMissionDB == nil {
-		return errors.Wrap(err, "failed record withdraw, such explorer-mission connection is not in db, resynchronize")
+		return errors.New("failed record withdraw, such explorer-mission connection is not in db, resynchronize")
 	} else {
 		explorerMissionDB.Withdrawn = true
 
