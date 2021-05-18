@@ -1,0 +1,26 @@
+log:
+  level: info
+  disable_sentry: true
+
+db:
+  url: postgres://postgres:postgres@localhost:5432/spaceship_staking?sslmode=disable
+
+#listener:
+#  addr: :8000 # TODO configure and rm this TODO
+
+rpc:
+  endpoint: "http://127.0.0.1:8545"
+#  endpoint: "https://bsc-dataseed.binance.org/"
+
+contract:
+  address: "0xcA393D78Af44B4C2f0caA9B36Eb4606661240296"
+#  address: "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82"
+
+events:
+  mission_joined_hash: "0x46c4495f0ee3d58b36380634a7eb302a3bcc03782d761b8b5c47f11f05fd9d63"
+  mission_created_hash: "0x280fd1c13afdf05ef9c7dbd512eed44cfa4545e4c471c2673baf1d275a3d8fd9"
+  reward_withdrawn_hash: "0x7500c4319132adbe5ee377dbd33a4a90bfe57b88551d814b444a80a6c4c6cfa0"
+#  mission_joined_hash: "0xd6e3c8a1dd1daf32450d8af7c39417fbe07ea4ad4df74382706e3aefb1ad2635"
+#  mission_created_hash: "0xdd9712cbd151821d0004cefb58c8c6e7c2b8d028ac57f650523ccaf2d0113593"
+#  reward_withdrawn_hash: "0xf13b087c619fa3d3b2d6e5e3f6454e83cc250de5c465529c129d529ce9eb581f"
+

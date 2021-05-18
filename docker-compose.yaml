@@ -1,0 +1,28 @@
+version: "3.3"
+
+services:
+    spaceship-staking_db:
+        image: tokend/postgres-ubuntu:9.6
+        restart: unless-stopped
+        environment:
+           - POSTGRES_USER=postgres
+           - POSTGRES_PASSWORD=postgres
+           - POSTGRES_DB=spaceship_staking
+           - PGDATA=/pgdata
+        volumes:
+           - spaceship-staking-data:/pgdata
+
+    spaceship-staking:
+         image: spaceship-staking:latest
+         restart: unless-stopped
+         environment:
+           - KV_VIPER_FILE=/spaceship-staking.yaml
+         ports:
+           - 8079:79
+         volumes:
+           - ./configs/spaceship-staking.yaml:/spaceship-staking.yaml
+         depends_on:
+           - spaceship-staking_db
+         entrypoint: sh -c "bsc-checker-events migrate down && bsc-checker-events migrate up && bsc-checker-events run service"
+volumes:
+    spaceship-staking-data:
