@@ -3,7 +3,7 @@ log:
   disable_sentry: true
 
 db:
-  url: postgres://postgres:postgres@localhost:5432/spaceship_staking?sslmode=disable
+  url: postgres://spaceship:spaceship@spaceship-staking_db/spaceship?sslmode=disable
 
 #listener:
 #  addr: :8000 # TODO configure and rm this TODO

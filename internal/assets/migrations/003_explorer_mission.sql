@@ -2,7 +2,7 @@
 
 CREATE TABLE explorer_mission
 (
-    explorer_mission_id BIGINT GENERATED ALWAYS AS IDENTITY,
+    explorer_mission_id SERIAL,
     explorer            BIGINT  NOT NULL,
     mission             BIGINT  NOT NULL,
     withdrawn           Boolean NOT NULL,

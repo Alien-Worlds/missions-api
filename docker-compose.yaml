@@ -5,9 +5,9 @@ services:
         image: tokend/postgres-ubuntu:9.6
         restart: unless-stopped
         environment:
-           - POSTGRES_USER=postgres
-           - POSTGRES_PASSWORD=postgres
-           - POSTGRES_DB=spaceship_staking
+           - POSTGRES_USER=spaceship
+           - POSTGRES_PASSWORD=spaceship
+           - POSTGRES_DB=spaceship
            - PGDATA=/pgdata
         volumes:
            - spaceship-staking-data:/pgdata
@@ -23,6 +23,7 @@ services:
            - ./configs/spaceship-staking.yaml:/spaceship-staking.yaml
          depends_on:
            - spaceship-staking_db
-         entrypoint: sh -c "bsc-checker-events migrate down && bsc-checker-events migrate up && bsc-checker-events run service"
+         entrypoint: sh -c "bsc-checker-events migrate up && bsc-checker-events run service"
+
 volumes:
     spaceship-staking-data:
