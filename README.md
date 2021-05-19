@@ -8,8 +8,8 @@ An event listener for contract deployed bscscan.com to store the events informat
 * [Go 1.15+](https://golang.org/) 
 * [Postgresql 12.6](https://www.postgresql.org/)
 
-##Running the service
-####For development purposes
+## Running the service
+#### For development purposes
 1. Modify *config.yaml* file with your needs:
 
    * Provide a database url where the information will be stored in the form as provided [here](https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING)
@@ -55,7 +55,7 @@ An event listener for contract deployed bscscan.com to store the events informat
 	run service
 	```
 
-####For deployment purposes
+#### For deployment purposes
 1. Navigate to the cloned repository
 2. Do the step 1 from development build, except modify config at *configs/spaceship-staking.yaml*, changing contract address and database url (for the contract deployed on the Binance Smart Chain leave the endpoint as it is 
 3. Build container image:
