@@ -1,9 +1,11 @@
 package cli
 
 import (
+    "context"
     "github.com/alecthomas/kingpin"
     "github.com/redcuckoo/bsc-checker-events/internal/config"
     "github.com/redcuckoo/bsc-checker-events/internal/service"
+    "github.com/redcuckoo/bsc-checker-events/internal/service/checker-svc/checker"
     "gitlab.com/distributed_lab/kit/kv"
     "gitlab.com/distributed_lab/logan/v3"
 )
@@ -24,6 +26,7 @@ func Run(args []string) bool {
 
     runCmd := app.Command("run", "run command")
     serviceCmd := runCmd.Command("service", "run service") // you can insert custom help
+    apiCmd := runCmd.Command("api", "run api")
 
     migrateCmd := app.Command("migrate", "migrate command")
     migrateUpCmd := migrateCmd.Command("up", "migrate db up")
@@ -37,25 +40,25 @@ func Run(args []string) bool {
         return false
     }
 
-    //ctx := context.Background()
+    ctx := context.Background()
 
     switch cmd {
-    case serviceCmd.FullCommand():
+    case apiCmd.FullCommand():
         service.Run(cfg)
-        //svc := checker.New(cfg)
-        //svc.Run(ctx)
+        return true
+    case serviceCmd.FullCommand():
+        svc := checker.New(cfg)
+        svc.Run(ctx)
         return true
     case migrateUpCmd.FullCommand():
         err = MigrateUp(cfg)
-        //return true
     case migrateDownCmd.FullCommand():
         err = MigrateDown(cfg)
-        //return true
-    // handle any custom commands here in the same way
     default:
         log.Errorf("unknown command %s", cmd)
         return false
     }
+
     if err != nil {
         log.WithError(err).Error("failed to exec cmd")
         return false

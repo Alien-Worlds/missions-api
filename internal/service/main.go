@@ -17,9 +17,13 @@ type service struct {
 }
 
 func (s *service) run(cfg config.Config) error {
+	s.log.Info("Running api service")
+
 	r := s.router(cfg)
 
 	if err := s.copus.RegisterChi(r); err != nil {
+		s.log.Info("errored while running api service")
+
 		return errors.Wrap(err, "cop failed")
 	}
 
@@ -27,8 +31,10 @@ func (s *service) run(cfg config.Config) error {
 }
 
 func newService(cfg config.Config) *service {
+	log := cfg.Log().WithField("api-service", "")
+
 	return &service{
-		log:      cfg.Log(),
+		log:      log,
 		copus:    cfg.Copus(),
 		listener: cfg.Listener(),
 	}
