@@ -2,13 +2,13 @@ package config
 
 import (
 	"github.com/ethereum/go-ethereum/core/types"
-	//"github.com/binance-chain/bsc-static/bsc/common"
-	//"github.com/binance-chain/bsc-static/bsc/core/types"
-	//bscClient "github.com/binance-chain/bsc-static/bsc/ethclient"
 	bscClient "github.com/ethereum/go-ethereum/ethclient"
 	"gitlab.com/distributed_lab/kit/comfig"
+	"gitlab.com/distributed_lab/kit/copus"
+	copTypes "gitlab.com/distributed_lab/kit/copus/types"
 	"gitlab.com/distributed_lab/kit/kv"
 	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/tokend/connectors/signed"
 )
 
 type Config interface {
@@ -19,6 +19,9 @@ type Config interface {
 	Contract() ContractAddress
 	pgdb.Databaser
 	comfig.Logger
+	copTypes.Copuser
+	comfig.Listenerer
+	signed.Clienter
 }
 
 type config struct {
@@ -28,6 +31,9 @@ type config struct {
 
 	pgdb.Databaser
 	comfig.Logger
+	copTypes.Copuser
+	comfig.Listenerer
+	signed.Clienter
 
 	getter kv.Getter
 	once   comfig.Once
@@ -39,8 +45,11 @@ type config struct {
 
 func New(getter kv.Getter) Config {
 	return &config{
-		getter:    getter,
-		Logger:    comfig.NewLogger(getter, comfig.LoggerOpts{}),
-		Databaser: pgdb.NewDatabaser(getter),
+		getter:     getter,
+		Copuser:    copus.NewCopuser(getter),
+		Listenerer: comfig.NewListenerer(getter),
+		Clienter:   signed.NewClienter(getter),
+		Logger:     comfig.NewLogger(getter, comfig.LoggerOpts{}),
+		Databaser:  pgdb.NewDatabaser(getter),
 	}
 }

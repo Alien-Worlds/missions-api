@@ -1,0 +1,32 @@
+get:
+  tags:
+    - Mission
+    - Get Mission
+  summary: Mission
+  description: |
+    Returns mission by its id.
+    Creates a new session.
+  operationId: getMission
+  requestBody:
+    content:
+      application/vnd.api+json:
+        schema:
+          type: object
+          required:
+            - data
+          properties:
+            data:
+              type: object
+              $ref: '#/components/schemas/Mission'
+  responses:
+    '200':
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: array
+            properties:
+              data:
+                $ref: '#/components/schemas/Mission'
+    '404':
+      description: wallet not found
