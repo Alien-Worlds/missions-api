@@ -11,6 +11,7 @@ services:
            - PGDATA=/pgdata
         volumes:
            - spaceship-staking-data:/pgdata
+           - spaceship-staking-api-data/pgdata
 
     spaceship-staking:
          image: spaceship-staking:latest
@@ -25,5 +26,19 @@ services:
            - spaceship-staking_db
          entrypoint: sh -c "bsc-checker-events migrate up && bsc-checker-events run service"
 
+    spaceship-staking_api:
+         image: spaceship-staking:latest
+         restart: unless-stopped
+         environment:
+           - KV_VIPER_FILE=/spaceship-staking.yaml
+         ports:
+           - 8078:78
+         volumes:
+           - ./configs/spaceship-staking.yaml:/spaceship-staking.yaml
+         depends_on:
+           - spaceship-staking_db
+         entrypoint: sh -c "bsc-checker-events run api"
+
 volumes:
     spaceship-staking-data:
+    spaceship-staking-api-data:
