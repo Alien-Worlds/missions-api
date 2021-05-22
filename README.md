@@ -68,3 +68,18 @@ An event listener for contract deployed bscscan.com to store the events informat
    docker-compose down -v
    docker-compose up -d
 	```
+
+### API
+To change port, configure 
+```sh
+listener:
+  addr: :8888
+```
+where *8888* is a port to listen on.
+
+#### Endpoints
+```sh
+/missions # get all missions
+/missions/{mission-id} # get mission by it's id
+/explorers/{explorer-id} # get missions joined by explorer
+```
