@@ -26,7 +26,7 @@ func GetMissionById(w http.ResponseWriter, r *http.Request) {
 	mission, err := missionQ.FilterById(missionId).Get()
 
 	if err != nil {
-		helpers.Log(r).WithError(err).Error("failed to get accounts")
+		helpers.Log(r).WithError(err).Error("failed to get mission")
 		ape.Render(w, problems.InternalError())
 		return
 	}

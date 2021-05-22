@@ -23,7 +23,7 @@ func GetListMissions(w http.ResponseWriter, r *http.Request) {
 	missions, err := missionQ.Select()
 
 	if err != nil {
-		helpers.Log(r).WithError(err).Error("failed to get accounts")
+		helpers.Log(r).WithError(err).Error("failed to get missions")
 		ape.Render(w, problems.InternalError())
 		return
 	}
@@ -38,8 +38,8 @@ func GetListMissions(w http.ResponseWriter, r *http.Request) {
 
 func newMissionsList(missions []data.Mission) []resources.Mission {
 	result := make([]resources.Mission, len(missions))
-	for i, account := range missions {
-		result[i] = newMissionModel(account)
+	for i, mission := range missions {
+		result[i] = newMissionModel(mission)
 	}
 	return result
 }
