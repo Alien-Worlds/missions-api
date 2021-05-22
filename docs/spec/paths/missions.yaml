@@ -7,6 +7,17 @@ get:
     Returns mission by its id.
     Creates a new session.
   operationId: getMission
+  requestBody:
+    content:
+      application/vnd.api+json:
+        schema:
+          type: object
+          required:
+            - data
+          properties:
+            data:
+              type: object
+              $ref: '#/components/schemas/Mission'
   responses:
     '200':
       description: Success

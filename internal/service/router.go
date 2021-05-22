@@ -23,13 +23,13 @@ func (s *service) router(cfg config.Config) chi.Router {
 
     // configure endpoints here
     r.Route("/missions", func (r chi.Router){
-        //r.Get("/{missionId}", handlers.getMissionById)
+        r.Get("/{mission-id}", handlers.GetMissionById)
         r.Get("/", handlers.GetListMissions)
     })
 
-    //r.Route("/explorers", func(r chi.Router){
-    //    //r.Get("{explorerId}", handlers.getMissionsByExplorerId)
-    //})
+    r.Route("/explorers", func(r chi.Router){
+       r.Get("{explorer-id}", handlers.GetMissionsByExplorerId)
+    })
 
     return r
 }

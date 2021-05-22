@@ -8,7 +8,6 @@ import (
 
 type MissionListRequest struct {
 	pgdb.OffsetPageParams
-	IncludeSigners      bool       `include:"signers"`
 }
 
 func NewGetMissionListRequest(r *http.Request) (MissionListRequest, error) {
