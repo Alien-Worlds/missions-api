@@ -1,10 +1,9 @@
 package cli
 
 import (
-    "context"
     "github.com/alecthomas/kingpin"
     "github.com/redcuckoo/bsc-checker-events/internal/config"
-    "github.com/redcuckoo/bsc-checker-events/internal/service/checker-svc/checker"
+    "github.com/redcuckoo/bsc-checker-events/internal/service"
     "gitlab.com/distributed_lab/kit/kv"
     "gitlab.com/distributed_lab/logan/v3"
 )
@@ -38,12 +37,13 @@ func Run(args []string) bool {
         return false
     }
 
-    ctx := context.Background()
+    //ctx := context.Background()
 
     switch cmd {
     case serviceCmd.FullCommand():
-        svc := checker.New(cfg)
-        svc.Run(ctx)
+        service.Run(cfg)
+        //svc := checker.New(cfg)
+        //svc.Run(ctx)
         return true
     case migrateUpCmd.FullCommand():
         err = MigrateUp(cfg)

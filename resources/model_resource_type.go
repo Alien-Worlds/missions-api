@@ -4,5 +4,9 @@
 
 package resources
 
-type ResourceType struct {
-}
+type ResourceType string
+
+// List of ResourceType
+const (
+	MISSION ResourceType = "mission"
+)
