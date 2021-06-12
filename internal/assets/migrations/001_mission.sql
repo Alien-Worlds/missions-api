@@ -15,7 +15,7 @@ CREATE TABLE mission
     mission_power  BIGINT       NOT NULL,
     total_ships    BIGINT       NOT NULL,
     nft_contract   bytea        NOT NULL,
-    nft_token_uri  VARCHAR(20)  NOT NULL,
+    nft_token_uri  VARCHAR(64)  NOT NULL,
     PRIMARY KEY (mission_id)
 );
 
