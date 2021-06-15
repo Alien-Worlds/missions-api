@@ -9,8 +9,8 @@ import (
 	"net/http"
 )
 
-func GetMissionsByExplorerId(w http.ResponseWriter, r *http.Request) {
-	explorerAddressString := chi.URLParam(r, "explorer-id")
+func GetMissionsByExplorerAddress(w http.ResponseWriter, r *http.Request) {
+	explorerAddressString := chi.URLParam(r, "explorer-address")
 
 	explorerMissionQ := helpers.ExplorerMission(r)
 

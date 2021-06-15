@@ -81,5 +81,5 @@ where *8888* is a port to listen on.
 ```sh
 /missions # get all missions
 /missions/{mission-id} # get mission by it's id
-/explorers/{explorer-id} # get missions joined by explorer
+/explorers/{explorer-address} # get missions joined by explorer address
 ```

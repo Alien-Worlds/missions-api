@@ -31,7 +31,7 @@ func (s *service) router(cfg config.Config) chi.Router {
 	})
 
 	r.Route("/explorers", func(r chi.Router) {
-		r.Get("/{explorer-id}", handlers.GetMissionsByExplorerId)
+		r.Get("/{explorer-address}", handlers.GetMissionsByExplorerAddress)
 	})
 
 	return r
