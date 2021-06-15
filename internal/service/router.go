@@ -20,6 +20,7 @@ func (s *service) router(cfg config.Config) chi.Router {
 			helpers.CtxLog(s.log),
 			helpers.CtxMission(pg.NewMissionQ(cfg.DB())),
 			helpers.CtxExplorerMission(pg.NewExplorerMissionQ(cfg.DB())),
+			helpers.CtxExplorer(pg.NewExplorerQ(cfg.DB())),
 		),
 	)
 

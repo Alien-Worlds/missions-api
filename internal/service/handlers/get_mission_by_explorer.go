@@ -7,23 +7,23 @@ import (
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"net/http"
-	"strconv"
 )
 
 func GetMissionsByExplorerId(w http.ResponseWriter, r *http.Request) {
-	explorerIdString := chi.URLParam(r, "explorer-id")
+	explorerAddressString := chi.URLParam(r, "explorer-id")
 
 	explorerMissionQ := helpers.ExplorerMission(r)
 
-	explorerId, err := strconv.ParseInt(explorerIdString, 10, 64)
+	explorerQ := helpers.Explorer(r)
+	explorer, err := explorerQ.FilterByAddress(explorerAddressString).Get()
 
-	if err != nil {
-		helpers.Log(r).WithError(err).Error("failed to parse explorer id")
+	if err != nil || explorer == nil {
+		helpers.Log(r).WithError(err).Error("failed to get explorer from db")
 		ape.Render(w, problems.InternalError())
 		return
 	}
 
-	explorerMissions, err := explorerMissionQ.FilterByExplorer(explorerId).Select()
+	explorerMissions, err := explorerMissionQ.FilterByExplorer(int64(explorer.ExplorerId)).Select()
 
 	if err != nil {
 		helpers.Log(r).WithError(err).Error("failed to get explorer-missions")

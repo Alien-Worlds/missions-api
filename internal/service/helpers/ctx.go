@@ -14,6 +14,7 @@ const (
     logCtxKey ctxKey = iota
     missionCtxKey
     explorerMissionCtxKey
+    explorerCtxKey
 )
 
 func CtxLog(entry *logan.Entry) func(context.Context) context.Context {
@@ -44,4 +45,14 @@ func CtxExplorerMission(q data.ExplorerMissionQ) func(context.Context) context.C
 
 func ExplorerMission(r *http.Request) data.ExplorerMissionQ {
     return r.Context().Value(explorerMissionCtxKey).(data.ExplorerMissionQ).New()
+}
+
+func CtxExplorer(q data.ExplorerQ) func(context.Context) context.Context {
+    return func(ctx context.Context) context.Context {
+        return context.WithValue(ctx, explorerCtxKey, q)
+    }
+}
+
+func Explorer(r *http.Request) data.ExplorerQ {
+    return r.Context().Value(explorerCtxKey).(data.ExplorerQ).New()
 }
