@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/redcuckoo/bsc-checker-events/internal/data"
 	"github.com/redcuckoo/bsc-checker-events/internal/service/helpers"
 	"github.com/redcuckoo/bsc-checker-events/internal/service/requests"
@@ -59,7 +60,7 @@ func newMissionModel(mission data.Mission) resources.Mission {
 			MissionPower: mission.MissionPower,
 			MissionType:  mission.MissionType,
 			Name:         mission.Name,
-			NftContract: string(mission.NftContract),
+			NftContract: common.BytesToAddress(mission.NftContract).String(),
 			NftTokenURI: mission.NftTokenURI,
 			Reward: mission.Reward,
 			SpaceshipCost: mission.SpaceshipCost,
