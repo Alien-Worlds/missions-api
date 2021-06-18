@@ -31,7 +31,7 @@ func New(cfg config.Config) *Service {
 		explorerQ:         pg.NewExplorerQ(cfg.DB()),
 		explorer_missionQ: pg.NewExplorerMissionQ(cfg.DB()),
 		contractAddress:   cfg.Contract(),
-		lastBlockNumber:   0,
+		lastBlockNumber:   uint64(cfg.Block().FromBlockNum),
 		log:               log,
 	}
 }
