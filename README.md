@@ -25,7 +25,11 @@ An event listener for contract deployed bscscan.com to store the events informat
 		contract:
 		   address: "0x0000000000000000000000000000000000000000"
 		```
-  
+   * Provide block number to start with
+		```sh
+		blockchain_info:
+                   from_block_num: 8325019
+		```
    * If you are using local blockchain (e.g Ganache), provide other endpoint
 
 		```sh

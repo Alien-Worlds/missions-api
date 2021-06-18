@@ -12,11 +12,11 @@ import (
 )
 
 type Config interface {
+	Block() Block
 	BSC() bscClient.Client
-
+	Contract() ContractAddress
 	EventsConfig() EventsConfig
 
-	Contract() ContractAddress
 	pgdb.Databaser
 	comfig.Logger
 	copTypes.Copuser
@@ -26,8 +26,9 @@ type Config interface {
 
 type config struct {
 	bsc bscClient.Client
-
+	contract ContractAddress
 	eventsConfig EventsConfig
+	lastBlock types.Block
 
 	pgdb.Databaser
 	comfig.Logger
@@ -37,10 +38,6 @@ type config struct {
 
 	getter kv.Getter
 	once   comfig.Once
-
-	contract ContractAddress
-
-	lastBlock types.Block
 }
 
 func New(getter kv.Getter) Config {

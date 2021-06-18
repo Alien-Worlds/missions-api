@@ -52,9 +52,18 @@ func (s *Service) Run(ctx context.Context) {
 
 		s.log.Infof("Fetching events for address", common.HexToAddress(s.contractAddress.Address))
 
+		//the limit for filtering logs is 5000 blocks
+		var toBlockNum uint64
+
+		if currBlock.NumberU64() - s.lastBlockNumber > 5000{
+			toBlockNum = s.lastBlockNumber + 5000
+		}else{
+			toBlockNum = currBlock.NumberU64()
+		}
+
 		logs, err := s.bscClient.FilterLogs(ctx, ethereum.FilterQuery{
 			FromBlock: big.NewInt(int64(s.lastBlockNumber)),
-			ToBlock:   currBlock.Number(),
+			ToBlock:  big.NewInt(int64(toBlockNum)),
 			Addresses: []common.Address{
 				common.HexToAddress(s.contractAddress.Address),
 			},
@@ -64,7 +73,11 @@ func (s *Service) Run(ctx context.Context) {
 			return errors.Wrap(err, "failed to set filter query for filter logs")
 		}
 
-		s.lastBlockNumber = currBlock.NumberU64() + 1
+		if currBlock.NumberU64() - s.lastBlockNumber > 5000{
+			s.lastBlockNumber = s.lastBlockNumber + 5001
+		}else{
+			s.lastBlockNumber = currBlock.NumberU64() + 1
+		}
 
 		err = s.process(ctx, logs)
 		if err != nil {
