@@ -1,12 +1,15 @@
 package handlers
 
 import (
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/go-chi/chi"
+	"github.com/redcuckoo/bsc-checker-events/internal/data"
 	"github.com/redcuckoo/bsc-checker-events/internal/service/helpers"
 	"github.com/redcuckoo/bsc-checker-events/resources"
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"net/http"
+	"strconv"
 )
 
 func GetMissionsByExplorerAddress(w http.ResponseWriter, r *http.Request) {
@@ -32,7 +35,7 @@ func GetMissionsByExplorerAddress(w http.ResponseWriter, r *http.Request) {
 	}
 
 	missionQ := helpers.Mission(r)
-	missionList := make([]resources.Mission, len(explorerMissions))
+	missionByExplorerList := make([]resources.MissionByExplorer, len(explorerMissions))
 
 	for i, explorerMission := range explorerMissions {
 		mission, err := missionQ.FilterById(explorerMission.Mission).Get()
@@ -43,12 +46,37 @@ func GetMissionsByExplorerAddress(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		missionList[i] = newMissionModel(*mission)
+		missionByExplorerList[i] = newMissionByExplorerModel(*mission, explorerMission.Withdrawn)
 	}
 
-	result := resources.MissionListResponse{
-		Data: missionList,
+	result := resources.MissionByExplorerListResponse{
+		Data: missionByExplorerList,
 	}
 
 	ape.Render(w, result)
+}
+
+func newMissionByExplorerModel(mission data.Mission, withdrawn bool) resources.MissionByExplorer{
+	return resources.MissionByExplorer{
+		Key: resources.Key{
+			ID: strconv.FormatUint(mission.MissionId, 10),
+			Type: resources.MISSION,
+		},
+		Attributes: resources.MissionByExplorerAttributes{
+			BoardingTime: mission.BoardingTime,
+			Description:  mission.Description,
+			Duration:     mission.Duration,
+			EndTime:      mission.EndTime,
+			LaunchTime:   mission.LaunchTime,
+			MissionPower: mission.MissionPower,
+			MissionType:  mission.MissionType,
+			Name:         mission.Name,
+			NftContract: common.BytesToAddress(mission.NftContract).String(),
+			NftTokenURI: mission.NftTokenURI,
+			Reward: mission.Reward,
+			SpaceshipCost: mission.SpaceshipCost,
+			TotalShips:	mission.TotalShips,
+			Withdrawn: withdrawn,
+		},
+	}
 }
