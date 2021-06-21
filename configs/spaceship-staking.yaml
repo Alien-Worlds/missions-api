@@ -12,10 +12,12 @@ contract:
   address: "0x0000000000000000000000000000000000000000"
 
 events:
-  mission_joined_hash: "0x46c4495f0ee3d58b36380634a7eb302a3bcc03782d761b8b5c47f11f05fd9d63"
   mission_created_hash: "0x280fd1c13afdf05ef9c7dbd512eed44cfa4545e4c471c2673baf1d275a3d8fd9"
-  reward_withdrawn_hash: "0x7500c4319132adbe5ee377dbd33a4a90bfe57b88551d814b444a80a6c4c6cfa0"
+  mission_joined_hash: "0xceb49b5adb5e3737df9e0679d210f1006878fb83bf58974f7279b0c79460898b"
+  reward_withdrawn_hash: "3f0d190fee71fcedf315c1a691ca936a8893467ce62d0bb52e5643ded084fe46"
 
+blockchain_info:
+  from_block_num: 8325019
 
 listener:
   addr: :8108
