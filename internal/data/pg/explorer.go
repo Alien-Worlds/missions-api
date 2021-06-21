@@ -2,6 +2,7 @@ package pg
 
 import (
 	"database/sql"
+	"strings"
 
 	"github.com/Masterminds/squirrel"
 	"github.com/fatih/structs"
@@ -50,11 +51,14 @@ func (d *explorerQ) Select() ([]data.Explorer, error) {
 }
 
 func (d *explorerQ) FilterByAddress(explorerAddress string) data.ExplorerQ {
+	explorerAddress = strings.ToLower(explorerAddress)
 	d.sql = d.sql.Where(squirrel.Eq{"explorer_address": explorerAddress})
 	return d
 }
 
 func (d *explorerQ) Insert(explorer data.Explorer) (data.Explorer, error) {
+	explorer.ExplorerAddress = strings.ToLower(explorer.ExplorerAddress)
+
 	clauses := structs.Map(explorer)
 
 	query := squirrel.Insert(tableExplorer).SetMap(clauses).Suffix("returning *")
@@ -69,6 +73,8 @@ func (d *explorerQ) Insert(explorer data.Explorer) (data.Explorer, error) {
 }
 
 func (d *explorerQ) Update(explorer data.Explorer) (data.Explorer, error) {
+	explorer.ExplorerAddress = strings.ToLower(explorer.ExplorerAddress)
+
 	clauses := structs.Map(explorer)
 
 	query := squirrel.Update(tableExplorer).Where(squirrel.Eq{"explorer_address": explorer.ExplorerAddress}).SetMap(clauses).Suffix("returning *")

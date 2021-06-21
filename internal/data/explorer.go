@@ -7,8 +7,8 @@ type ExplorerQ interface {
 
 	Select() ([]Explorer, error)
 
-	Insert(mission Explorer) (Explorer, error)
-	Update(mission Explorer) (Explorer, error)
+	Insert(explorer Explorer) (Explorer, error)
+	Update(explorer Explorer) (Explorer, error)
 	
 	FilterByAddress(explorerAddress string) ExplorerQ
 }
