@@ -21,3 +21,10 @@ blockchain_info:
 
 listener:
   addr: :8108
+
+cop:
+  disabled: true
+  endpoint: "http://..."
+  upstream: "http://..."
+  service_name: bsc-checker-events
+  service_port: 80
