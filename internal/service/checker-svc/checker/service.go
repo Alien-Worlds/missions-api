@@ -46,19 +46,20 @@ func (s *Service) Run(ctx context.Context) {
 		}
 
 		if s.lastBlockNumber > currBlock.NumberU64() {
-			//s.log.Infof("Current block was already processed", currBlock.NumberU64())
 			return nil
 		}
-
-		s.log.Infof("Fetching events for address", common.HexToAddress(s.contractAddress.Address))
 
 		//the limit for filtering logs is 5000 blocks
 		var toBlockNum uint64
 
 		if currBlock.NumberU64() - s.lastBlockNumber > 5000{
 			toBlockNum = s.lastBlockNumber + 5000
+
+			s.log.Infof("Fetching events from block %d to block %d",s.lastBlockNumber, toBlockNum)
 		}else{
 			toBlockNum = currBlock.NumberU64()
+
+			s.log.Infof("Fetching events from block %d to head of blockchain,  block %d",s.lastBlockNumber, toBlockNum)
 		}
 
 		logs, err := s.bscClient.FilterLogs(ctx, ethereum.FilterQuery{
@@ -89,7 +90,7 @@ func (s *Service) Run(ctx context.Context) {
 }
 
 func (s *Service) process(ctx context.Context, logs []types.Log) error {
-	s.log.Infof("Running process(), logs amount", len(logs))
+	s.log.Infof("Running process(), logs amount %d", len(logs))
 	for _, event := range logs {
 		err := s.processEvent(ctx, event)
 		if err != nil {
