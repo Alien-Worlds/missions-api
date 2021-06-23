@@ -12,7 +12,7 @@ import (
 
 const tableExplorer = "explorer"
 
-func NewExplorerQ(db *pgdb.DB) data.ExplorerQ{
+func NewExplorerQ(db *pgdb.DB) data.ExplorerQ {
 	return &explorerQ{
 		db:  db.Clone(),
 		sql: squirrel.Select("*").From(tableExplorer),
@@ -31,12 +31,11 @@ func (d *explorerQ) New() data.ExplorerQ {
 func (d *explorerQ) Get() (*data.Explorer, error) {
 	var result data.Explorer
 	err := d.db.Get(&result, d.sql)
+
 	if err == sql.ErrNoRows {
-		d.sql =  squirrel.Select("*").From(tableExplorer)
 		return nil, nil
 	}
 
-	d.sql =  squirrel.Select("*").From(tableExplorer)
 	return &result, err
 }
 
@@ -48,12 +47,6 @@ func (d *explorerQ) Select() ([]data.Explorer, error) {
 	}
 
 	return result, err
-}
-
-func (d *explorerQ) FilterByAddress(explorerAddress string) data.ExplorerQ {
-	explorerAddress = strings.ToLower(explorerAddress)
-	d.sql = d.sql.Where(squirrel.Eq{"explorer_address": explorerAddress})
-	return d
 }
 
 func (d *explorerQ) Insert(explorer data.Explorer) (data.Explorer, error) {
@@ -85,4 +78,10 @@ func (d *explorerQ) Update(explorer data.Explorer) (data.Explorer, error) {
 	}
 
 	return explorer, err
+}
+
+func (d explorerQ) FilterByAddress(explorerAddress string) data.ExplorerQ {
+	explorerAddress = strings.ToLower(explorerAddress)
+	d.sql = d.sql.Where(squirrel.Eq{"explorer_address": explorerAddress})
+	return &d
 }

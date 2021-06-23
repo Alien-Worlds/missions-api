@@ -10,10 +10,10 @@ import (
 
 const tableMission = "mission"
 
-func NewMissionQ(db *pgdb.DB) data.MissionQ{
+func NewMissionQ(db *pgdb.DB) data.MissionQ {
 	return &missionQ{
 		db:  db.Clone(),
-		sql: squirrel.Select("*").From(tableMission),
+		sql: squirrel.Select("*").From(tableMission).OrderBy("mission_id DESC"),
 	}
 }
 
@@ -32,11 +32,8 @@ func (d *missionQ) Get() (*data.Mission, error) {
 	err := d.db.Get(&result, d.sql)
 
 	if err == sql.ErrNoRows {
-		d.sql =  squirrel.Select("*").From(tableMission)
 		return nil, nil
 	}
-
-	d.sql =  squirrel.Select("*").From(tableMission)
 
 	return &result, err
 }
@@ -44,6 +41,7 @@ func (d *missionQ) Get() (*data.Mission, error) {
 func (d *missionQ) Select() ([]data.Mission, error) {
 	var result []data.Mission
 	err := d.db.Select(&result, d.sql)
+
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}
@@ -78,7 +76,8 @@ func (d *missionQ) Update(mission data.Mission) (data.Mission, error) {
 	return mission, err
 }
 
-func (d *missionQ) FilterById(missionId int64) data.MissionQ {
+func (d missionQ) FilterById(missionId int64) data.MissionQ {
 	d.sql = d.sql.Where(squirrel.Eq{"mission_id": missionId})
-	return d
+
+	return &d
 }

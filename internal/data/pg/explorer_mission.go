@@ -31,11 +31,9 @@ func (d *explorerMissionQ) Get() (*data.ExplorerMission, error) {
 	err := d.db.Get(&result, d.sql)
 
 	if err == sql.ErrNoRows {
-		d.sql =  squirrel.Select("*").From(tableExplorerMission)
 		return nil, nil
 	}
 
-	d.sql =  squirrel.Select("*").From(tableExplorerMission)
 	return &result, err
 }
 
@@ -76,12 +74,12 @@ func (d *explorerMissionQ) Update(explorerMission data.ExplorerMission) (data.Ex
 	return explorerMission, err
 }
 
-func (d *explorerMissionQ) FilterByMission(missionId int64) data.ExplorerMissionQ {
+func (d explorerMissionQ) FilterByMission(missionId int64) data.ExplorerMissionQ {
 	d.sql = d.sql.Where(squirrel.Eq{"mission": missionId})
-	return d
+	return &d
 }
 
-func (d *explorerMissionQ) FilterByExplorer(explorerId int64) data.ExplorerMissionQ {
+func (d explorerMissionQ) FilterByExplorer(explorerId int64) data.ExplorerMissionQ {
 	d.sql = d.sql.Where(squirrel.Eq{"explorer": explorerId})
-	return d
+	return &d
 }
