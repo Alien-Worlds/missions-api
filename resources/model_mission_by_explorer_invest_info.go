@@ -4,9 +4,7 @@
 
 package resources
 
-type InvestInfoAttributes struct {
-	NumberOfShips int64 `json:"numberOfShips"`
+type MissionByExplorerInvestInfo struct {
 	TotalStakeBNB int64 `json:"totalStakeBNB"`
 	TotalStakeTLM int64 `json:"totalStakeTLM"`
-	Withdrawn     bool  `json:"withdrawn"`
 }

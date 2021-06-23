@@ -5,5 +5,8 @@
 package resources
 
 type InvestInfo struct {
-	Attributes InvestInfoAttributes `json:"attributes"`
+	NumberOfShips int64 `json:"numberOfShips"`
+	TotalStakeBNB int64 `json:"totalStakeBNB"`
+	TotalStakeTLM int64 `json:"totalStakeTLM"`
+	Withdrawn     bool  `json:"withdrawn"`
 }

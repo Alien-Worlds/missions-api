@@ -1,15 +1,8 @@
 type: object
 required:
-  - withdrawn
-  - numberOfShips
   - totalStakeTLM
   - totalStakeBNB
 properties:
-  withdrawn:
-    type: boolean
-  numberOfShips:
-    type: integer
-    format: int64
   totalStakeTLM:
     type: integer
     format: int64

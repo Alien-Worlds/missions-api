@@ -35,7 +35,7 @@ func GetMissionsByExplorerAddress(w http.ResponseWriter, r *http.Request) {
 	}
 
 	missionQ := helpers.Mission(r)
-	missionByExplorerList := make([]resources.MissionByExplorer, len(explorerMissions))
+	missionByExplorerMissionsList := make([]resources.MissionByExplorerMissions, len(explorerMissions))
 
 	for i, explorerMission := range explorerMissions {
 		mission, err := missionQ.FilterById(explorerMission.Mission).Get()
@@ -46,43 +46,54 @@ func GetMissionsByExplorerAddress(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		missionByExplorerList[i] = newMissionByExplorerModel(*mission, explorerMission)
+		missionByExplorerMissionsList[i] = newMissionByExplorerMissionsModel(*mission, explorerMission)
 	}
 
-	result := resources.MissionByExplorerListResponse{
-		Data: missionByExplorerList,
+	result := resources.MissionByExplorerResponse{
+		Data: resources.MissionByExplorer{
+			Key: resources.Key{
+				ID:   strconv.FormatUint(explorer.ExplorerId, 10),
+				Type: resources.EXPLORER,
+			},
+			Attributes: resources.MissionByExplorerAttributes{
+				Address:  explorer.ExplorerAddress,
+				Missions: missionByExplorerMissionsList,
+				TotalInvestInfo: resources.MissionByExplorerInvestInfo{
+					TotalStakeBNB: explorer.TotalStakeBNB,
+					TotalStakeTLM: explorer.TotalStakeTLM,
+				},
+			},
+		},
 	}
 
 	ape.Render(w, result)
 }
 
-func newMissionByExplorerModel(mission data.Mission, explorerMission data.ExplorerMission) resources.MissionByExplorer{
-	return resources.MissionByExplorer{
+func newMissionByExplorerMissionsModel(mission data.Mission, explorerMission data.ExplorerMission) resources.MissionByExplorerMissions {
+	return resources.MissionByExplorerMissions{
 		Key: resources.Key{
-			ID: strconv.FormatUint(mission.MissionId, 10),
-			Type: resources.EXPLORER,
+			ID:   strconv.FormatUint(mission.MissionId, 10),
+			Type: resources.MISSION,
 		},
-		Attributes: resources.MissionByExplorerAttributes{
-			BoardingTime: mission.BoardingTime,
-			Description:  mission.Description,
-			Duration:     mission.Duration,
-			EndTime:      mission.EndTime,
-			LaunchTime:   mission.LaunchTime,
-			MissionPower: mission.MissionPower,
-			MissionType:  mission.MissionType,
-			Name:         mission.Name,
-			NftContract: common.BytesToAddress(mission.NftContract).String(),
-			NftTokenURI: mission.NftTokenURI,
-			Reward: mission.Reward,
+		Attributes: resources.MissionByExplorerMissionsAttributes{
+			BoardingTime:  mission.BoardingTime,
+			Description:   mission.Description,
+			Duration:      mission.Duration,
+			EndTime:       mission.EndTime,
+			LaunchTime:    mission.LaunchTime,
+			MissionPower:  mission.MissionPower,
+			MissionType:   mission.MissionType,
+			Name:          mission.Name,
+			NftContract:   common.BytesToAddress(mission.NftContract).String(),
+			NftTokenURI:   mission.NftTokenURI,
+			Reward:        mission.Reward,
 			SpaceshipCost: mission.SpaceshipCost,
-			TotalShips:	mission.TotalShips,
+			TotalShips:    mission.TotalShips,
 			InvestInfo: resources.InvestInfo{
-				Attributes: resources.InvestInfoAttributes{
-					NumberOfShips : explorerMission.NumberShips,
-					TotalStakeBNB: explorerMission.TotalStakeBNB,
-					TotalStakeTLM: explorerMission.TotalStakeTLM,
-					Withdrawn: explorerMission.Withdrawn,
-				},
+				NumberOfShips: explorerMission.NumberShips,
+				TotalStakeBNB: explorerMission.TotalStakeBNB,
+				TotalStakeTLM: explorerMission.TotalStakeTLM,
+				Withdrawn:     explorerMission.Withdrawn,
 			},
 		},
 	}

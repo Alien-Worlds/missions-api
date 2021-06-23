@@ -1,0 +1,62 @@
+allOf:
+  - $ref: '#/components/schemas/MissionKey'
+  - type: object
+    required:
+      - attributes
+    properties:
+      attributes:
+        type: object
+        required:
+          - description
+          - name
+          - boardingTime
+          - launchTime
+          - endTime
+          - duration
+          - missionType
+          - reward
+          - spaceshipCost
+          - missionPower
+          - totalShips
+          - nftContract
+          - nftTokenURI
+          - investInfo
+        properties:
+          description:
+            type: string
+          name:
+            type: string
+          boardingTime:
+            type: integer
+            format: int64
+          launchTime:
+            type: integer
+            format: int64
+          endTime:
+            type: integer
+            format: int64
+          duration:
+            type: integer
+            format: int64
+          missionType:
+            type: integer
+            format: int64
+          reward:
+            type: integer
+            format: int64
+          spaceshipCost:
+            type: integer
+            format: int64
+          missionPower:
+            type: integer
+            format: int64
+          totalShips:
+            type: integer
+            format: int64
+          nftContract:
+            type: string
+          nftTokenURI:
+            type: string
+          investInfo:
+            type: object
+            $ref: '#/components/schemas/InvestInfo'
