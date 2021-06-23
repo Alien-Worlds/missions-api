@@ -13,7 +13,7 @@ const tableExplorerMission = "explorer_mission"
 func NewExplorerMissionQ(db *pgdb.DB) data.ExplorerMissionQ {
 	return &explorerMissionQ{
 		db:  db.Clone(),
-		sql: squirrel.Select("*").From(tableExplorerMission),
+		sql: squirrel.Select("*").From(tableExplorerMission).OrderBy("mission DESC"),
 	}
 }
 

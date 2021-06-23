@@ -15,7 +15,7 @@ const tableExplorer = "explorer"
 func NewExplorerQ(db *pgdb.DB) data.ExplorerQ {
 	return &explorerQ{
 		db:  db.Clone(),
-		sql: squirrel.Select("*").From(tableExplorer),
+		sql: squirrel.Select("*").From(tableExplorer).OrderBy("explorer_id DESC"),
 	}
 }
 
