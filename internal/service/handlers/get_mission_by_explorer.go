@@ -46,7 +46,7 @@ func GetMissionsByExplorerAddress(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		missionByExplorerList[i] = newMissionByExplorerModel(*mission, explorerMission.Withdrawn)
+		missionByExplorerList[i] = newMissionByExplorerModel(*mission, explorerMission)
 	}
 
 	result := resources.MissionByExplorerListResponse{
@@ -56,11 +56,11 @@ func GetMissionsByExplorerAddress(w http.ResponseWriter, r *http.Request) {
 	ape.Render(w, result)
 }
 
-func newMissionByExplorerModel(mission data.Mission, withdrawn bool) resources.MissionByExplorer{
+func newMissionByExplorerModel(mission data.Mission, explorerMission data.ExplorerMission) resources.MissionByExplorer{
 	return resources.MissionByExplorer{
 		Key: resources.Key{
 			ID: strconv.FormatUint(mission.MissionId, 10),
-			Type: resources.MISSION,
+			Type: resources.EXPLORER,
 		},
 		Attributes: resources.MissionByExplorerAttributes{
 			BoardingTime: mission.BoardingTime,
@@ -76,7 +76,14 @@ func newMissionByExplorerModel(mission data.Mission, withdrawn bool) resources.M
 			Reward: mission.Reward,
 			SpaceshipCost: mission.SpaceshipCost,
 			TotalShips:	mission.TotalShips,
-			Withdrawn: withdrawn,
+			InvestInfo: resources.InvestInfo{
+				Attributes: resources.InvestInfoAttributes{
+					NumberOfShips : explorerMission.NumberShips,
+					TotalStakeBNB: explorerMission.TotalStakeBNB,
+					TotalStakeTLM: explorerMission.TotalStakeTLM,
+					Withdrawn: explorerMission.Withdrawn,
+				},
+			},
 		},
 	}
 }

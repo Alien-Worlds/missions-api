@@ -8,5 +8,6 @@ type ResourceType string
 
 // List of ResourceType
 const (
-	MISSION ResourceType = "mission"
+	MISSION  ResourceType = "mission"
+	EXPLORER ResourceType = "explorer"
 )
