@@ -1,11 +1,11 @@
 package handlers
 
 import (
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/go-chi/chi"
 	"github.com/Alien-Worlds/missions-api/internal/data"
 	"github.com/Alien-Worlds/missions-api/internal/service/helpers"
 	"github.com/Alien-Worlds/missions-api/resources"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/go-chi/chi"
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"net/http"
@@ -20,9 +20,15 @@ func GetMissionsByExplorerAddress(w http.ResponseWriter, r *http.Request) {
 	explorerQ := helpers.Explorer(r)
 	explorer, err := explorerQ.FilterByAddress(explorerAddressString).Get()
 
-	if err != nil || explorer == nil {
+	if err != nil {
 		helpers.Log(r).WithError(err).Error("failed to get explorer from db")
 		ape.Render(w, problems.InternalError())
+		return
+	}
+
+	if explorer == nil{
+		helpers.Log(r).WithError(err).Error("not found explorer from db")
+		ape.Render(w, problems.NotFound())
 		return
 	}
 
