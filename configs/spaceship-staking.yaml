@@ -14,17 +14,10 @@ contract:
 events:
   mission_created_hash: "0x280fd1c13afdf05ef9c7dbd512eed44cfa4545e4c471c2673baf1d275a3d8fd9"
   mission_joined_hash: "0xceb49b5adb5e3737df9e0679d210f1006878fb83bf58974f7279b0c79460898b"
-  reward_withdrawn_hash: "3f0d190fee71fcedf315c1a691ca936a8893467ce62d0bb52e5643ded084fe46"
+  reward_withdrawn_hash: "0x3f0d190fee71fcedf315c1a691ca936a8893467ce62d0bb52e5643ded084fe46"
 
 blockchain_info:
   from_block_num: 8325019
 
 listener:
   addr: :8108
-
-cop:
-  disabled: true
-  endpoint: "http://..."
-  upstream: "http://..."
-  service_name: bsc-checker-events
-  service_port: 80

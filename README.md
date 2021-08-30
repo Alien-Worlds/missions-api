@@ -1,5 +1,5 @@
-# bsc-checker-events
-An event listener for contract deployed bscscan.com to store the events information in the database
+# missions-api
+An event listener for contracts deployed on binance smart chain to store the events information in the database
 
 ## Requirements
 
