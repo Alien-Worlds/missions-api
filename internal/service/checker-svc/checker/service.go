@@ -2,24 +2,16 @@ package checker
 
 import (
 	"context"
-	"github.com/ethereum/go-ethereum"
-	"github.com/ethereum/go-ethereum/common"
-	"math/big"
-
-	//"math/big"
-	"time"
-
-	//_ "github.com/binance-chain/bsc-static/bsc"
-	//"github.com/binance-chain/bsc-static/bsc/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	//_ "github.com/binance-chain/bsc-static/bsc/common"
-	"github.com/ethereum/go-ethereum/core/types"
-	//"github.com/binance-chain/bsc-static/bsc/core/types"
-	//_ "github.com/lib/pq"
 	"github.com/Alien-Worlds/missions-api/internal/contracts"
 	"github.com/Alien-Worlds/missions-api/internal/data"
+	"github.com/ethereum/go-ethereum"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/distributed_lab/running"
+	"math/big"
+	"time"
 )
 
 func (s *Service) Run(ctx context.Context) {
@@ -230,7 +222,7 @@ func (s *Service) processMissionJoined(event types.Log, spaceshipToken *Spaceshi
 	explorerMissionDB = nil
 
 	if explorer != nil {
-		explorerMissionDB, err = s.explorer_missionQ.FilterByMission(missionJoined.MissionId.Int64()).FilterByExplorer(int64(explorer.ExplorerId)).Get()
+		explorerMissionDB, err = s.explorerMissionQ.FilterByMission(missionJoined.MissionId.Int64()).FilterByExplorer(int64(explorer.ExplorerId)).Get()
 	}
 
 	if err != nil {
@@ -307,7 +299,7 @@ func (s *Service) processMissionJoined(event types.Log, spaceshipToken *Spaceshi
 			TotalStakeBNB: investINFO.BNBAmount.Int64(),
 		}
 
-		_, err = s.explorer_missionQ.Insert(explorerMissionDB)
+		_, err = s.explorerMissionQ.Insert(explorerMissionDB)
 
 		if err != nil {
 			return errors.Wrap(err, "failed insert to db, explorer-mission")
@@ -317,7 +309,7 @@ func (s *Service) processMissionJoined(event types.Log, spaceshipToken *Spaceshi
 		explorerMissionDB.TotalStakeTLM = explorerMissionDB.NumberShips * missionFromContract.SpaceshipCost.Int64()
 		explorerMissionDB.TotalStakeBNB = investINFO.BNBAmount.Int64()
 
-		_, err = s.explorer_missionQ.Update(*explorerMissionDB)
+		_, err = s.explorerMissionQ.Update(*explorerMissionDB)
 
 		if err != nil {
 			return errors.Wrap(err, "failed update db, explorer-mission")
@@ -358,7 +350,7 @@ func (s *Service) processRewardWithdrawn(event types.Log, spaceshipToken *Spaces
 		return errors.New("failed record withdraw, such explorer is not in db, resynchronize")
 	}
 
-	explorerMissionDB, err := s.explorer_missionQ.FilterByMission(rewardWithdrawn.MissionId.Int64()).FilterByExplorer(int64(explorerDB.ExplorerId)).Get()
+	explorerMissionDB, err := s.explorerMissionQ.FilterByMission(rewardWithdrawn.MissionId.Int64()).FilterByExplorer(int64(explorerDB.ExplorerId)).Get()
 
 	if err != nil {
 		return errors.Wrap(err, "failed get info about mission-explorer")
@@ -369,7 +361,7 @@ func (s *Service) processRewardWithdrawn(event types.Log, spaceshipToken *Spaces
 	} else {
 		explorerMissionDB.Withdrawn = true
 
-		_, err = s.explorer_missionQ.Update(*explorerMissionDB)
+		_, err = s.explorerMissionQ.Update(*explorerMissionDB)
 
 		if err != nil {
 			return errors.Wrap(err, "failed to update db, explorer-mission")
