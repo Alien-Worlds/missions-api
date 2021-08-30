@@ -1,8 +1,8 @@
 package cli
 
 import (
-    "github.com/redcuckoo/bsc-checker-events/internal/assets"
-    "github.com/redcuckoo/bsc-checker-events/internal/config"
+    "github.com/Alien-Worlds/missions-api/internal/assets"
+    "github.com/Alien-Worlds/missions-api/internal/config"
     migrate "github.com/rubenv/sql-migrate"
     "gitlab.com/distributed_lab/logan/v3/errors"
 )

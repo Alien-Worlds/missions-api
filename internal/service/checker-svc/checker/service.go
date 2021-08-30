@@ -16,8 +16,8 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	//"github.com/binance-chain/bsc-static/bsc/core/types"
 	//_ "github.com/lib/pq"
-	"github.com/redcuckoo/bsc-checker-events/internal/contracts"
-	"github.com/redcuckoo/bsc-checker-events/internal/data"
+	"github.com/Alien-Worlds/missions-api/internal/contracts"
+	"github.com/Alien-Worlds/missions-api/internal/data"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/distributed_lab/running"
 )

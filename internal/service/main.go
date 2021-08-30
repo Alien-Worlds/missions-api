@@ -4,7 +4,7 @@ import (
 	"net"
 	"net/http"
 
-	"github.com/redcuckoo/bsc-checker-events/internal/config"
+	"github.com/Alien-Worlds/missions-api/internal/config"
 	"gitlab.com/distributed_lab/kit/copus/types"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"

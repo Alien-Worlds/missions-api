@@ -6,7 +6,7 @@ import (
 
 	"github.com/Masterminds/squirrel"
 	"github.com/fatih/structs"
-	"github.com/redcuckoo/bsc-checker-events/internal/data"
+	"github.com/Alien-Worlds/missions-api/internal/data"
 	"gitlab.com/distributed_lab/kit/pgdb"
 )
 

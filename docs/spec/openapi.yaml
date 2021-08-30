@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   version: 1.0.0
-  title: bsc-checker-events
+  title: missions-api
   description: ''
 servers:
   - url: 'https://api.demo.tokend.io'

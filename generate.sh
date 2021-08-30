@@ -3,8 +3,8 @@
 GENERATOR_IMAGE=registry.gitlab.com/tokend/openapi-go-generator:69f004b58152c83f007b593cc13e94b81d7200da
 
 
-GENERATED="${GOPATH}/src/github.com/redcuckoo/bsc-checker-events/resources"
-OPENAPI_DIR="${GOPATH}/src/github.com/redcuckoo/bsc-checker-events/docs/web_deploy"
+GENERATED="${GOPATH}/src/github.com/Alien-Worlds/missions-api/resources"
+OPENAPI_DIR="${GOPATH}/src/github.com/Alien-Worlds/missions-api/docs/web_deploy"
 PACKAGE_NAME=resources
 
 function printHelp {

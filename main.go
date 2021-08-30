@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-  "github.com/redcuckoo/bsc-checker-events/internal/cli"
+  "github.com/Alien-Worlds/missions-api/internal/cli"
 )
 
 func main() {

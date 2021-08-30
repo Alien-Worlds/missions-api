@@ -2,7 +2,7 @@ package helpers
 
 import (
     "context"
-    "github.com/redcuckoo/bsc-checker-events/internal/data"
+    "github.com/Alien-Worlds/missions-api/internal/data"
     "net/http"
 
     "gitlab.com/distributed_lab/logan/v3"

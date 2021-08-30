@@ -3,7 +3,7 @@ package requests
 import (
 	"encoding/json"
 	validation "github.com/go-ozzo/ozzo-validation"
-	"github.com/redcuckoo/bsc-checker-events/resources"
+	"github.com/Alien-Worlds/missions-api/resources"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"net/http"
 )

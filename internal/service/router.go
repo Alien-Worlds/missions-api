@@ -2,10 +2,10 @@ package service
 
 import (
 	"github.com/go-chi/chi"
-	"github.com/redcuckoo/bsc-checker-events/internal/config"
-	"github.com/redcuckoo/bsc-checker-events/internal/data/pg"
-	"github.com/redcuckoo/bsc-checker-events/internal/service/handlers"
-	"github.com/redcuckoo/bsc-checker-events/internal/service/helpers"
+	"github.com/Alien-Worlds/missions-api/internal/config"
+	"github.com/Alien-Worlds/missions-api/internal/data/pg"
+	"github.com/Alien-Worlds/missions-api/internal/service/handlers"
+	"github.com/Alien-Worlds/missions-api/internal/service/helpers"
 	"gitlab.com/distributed_lab/ape"
 )
 

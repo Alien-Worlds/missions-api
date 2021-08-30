@@ -4,9 +4,9 @@ import (
 
 	//bscClient "github.com/binance-chain/bsc-static/bsc/ethclient"
 	bscClient "github.com/ethereum/go-ethereum/ethclient"
-	"github.com/redcuckoo/bsc-checker-events/internal/config"
-	"github.com/redcuckoo/bsc-checker-events/internal/data"
-	"github.com/redcuckoo/bsc-checker-events/internal/data/pg"
+	"github.com/Alien-Worlds/missions-api/internal/config"
+	"github.com/Alien-Worlds/missions-api/internal/data"
+	"github.com/Alien-Worlds/missions-api/internal/data/pg"
 	"gitlab.com/distributed_lab/logan/v3"
 )
 

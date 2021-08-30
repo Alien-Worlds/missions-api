@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"github.com/go-chi/chi"
-	"github.com/redcuckoo/bsc-checker-events/internal/service/helpers"
-	"github.com/redcuckoo/bsc-checker-events/resources"
+	"github.com/Alien-Worlds/missions-api/internal/service/helpers"
+	"github.com/Alien-Worlds/missions-api/resources"
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"net/http"
