@@ -41,11 +41,11 @@ func (s *Service) Run(ctx context.Context) {
 			return nil
 		}
 
-		//the limit for filtering logs is 5000 blocks
+		//the limit for filtering logs is 500 blocks
 		var toBlockNum uint64
 
-		if currBlock.NumberU64() - s.lastBlockNumber > 5000{
-			toBlockNum = s.lastBlockNumber + 5000
+		if currBlock.NumberU64() - s.lastBlockNumber > 500{
+			toBlockNum = s.lastBlockNumber + 500
 
 			s.log.Infof("Fetching events from block %d to block %d",s.lastBlockNumber, toBlockNum)
 		}else{
@@ -66,8 +66,8 @@ func (s *Service) Run(ctx context.Context) {
 			return errors.Wrap(err, "failed to set filter query for filter logs")
 		}
 
-		if currBlock.NumberU64() - s.lastBlockNumber > 5000{
-			s.lastBlockNumber = s.lastBlockNumber + 5001
+		if currBlock.NumberU64() - s.lastBlockNumber > 500{
+			s.lastBlockNumber = s.lastBlockNumber + 501
 		}else{
 			s.lastBlockNumber = currBlock.NumberU64() + 1
 		}
@@ -78,7 +78,7 @@ func (s *Service) Run(ctx context.Context) {
 		}
 
 		return nil
-	}, 5*time.Second, 30*time.Second, time.Minute)
+	}, time.Second, 30*time.Second, time.Minute)
 }
 
 func (s *Service) process(ctx context.Context, logs []types.Log) error {
