@@ -1,9 +1,9 @@
 package handlers
 
 import (
-	"github.com/go-chi/chi"
 	"github.com/Alien-Worlds/missions-api/internal/service/helpers"
 	"github.com/Alien-Worlds/missions-api/resources"
+	"github.com/go-chi/chi"
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"net/http"
@@ -30,7 +30,6 @@ func GetMissionById(w http.ResponseWriter, r *http.Request) {
 		ape.Render(w, problems.InternalError())
 		return
 	}
-
 
 	result := resources.MissionResponse{
 		Data: newMissionModel(*mission),

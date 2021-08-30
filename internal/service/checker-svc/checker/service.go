@@ -116,19 +116,25 @@ func (s *Service) processEvent(ctx context.Context, event types.Log) error {
 
 	switch event.Topics[0].String() {
 	case s.eventsConfig.MissionCreatedHash:
-		err = s.processMissionCreated(ctx, event, spaceshipToken)
+		err = s.db.Transaction(func() error {
+			return s.processMissionCreated(ctx, event, spaceshipToken)
+		})
 
 		if err != nil {
 			return errors.Wrap(err, "failed process mission created event")
 		}
 	case s.eventsConfig.MissionJoinedHash:
-		err = s.processMissionJoined(ctx, event, spaceshipToken)
+		err = s.db.Transaction(func() error {
+			return s.processMissionJoined(ctx, event, spaceshipToken)
+		})
 
 		if err != nil {
 			return errors.Wrap(err, "failed process mission joined event")
 		}
 	case s.eventsConfig.RewardWithdrawnHash:
-		err = s.processRewardWithdrawn(event, spaceshipToken)
+		err = s.db.Transaction(func() error {
+			return s.processRewardWithdrawn(event, spaceshipToken)
+		})
 
 		if err != nil {
 			return errors.Wrap(err, "failed process reward withdrawn event")
@@ -204,12 +210,6 @@ func (s *Service) processMissionJoined(ctx context.Context, event types.Log, spa
 		return errors.Wrap(err, "failed parse mission joined")
 	}
 
-	//investINFO, err := spaceshipToken.MissionToUsersInvest(&bind.CallOpts{BlockNumber: big.NewInt(int64(event.BlockNumber))}, missionJoined.MissionId, missionJoined.Player)
-	//
-	//if err != nil {
-	//	return errors.Wrap(err, "failed get info about mission joined")
-	//}
-
 	missionFromContract, err := spaceshipToken.Missions(&bind.CallOpts{}, missionJoined.MissionId)
 
 	if err != nil {
@@ -241,7 +241,7 @@ func (s *Service) processMissionJoined(ctx context.Context, event types.Log, spa
 		return errors.Wrap(err, "failed fetch info from db, table mission, mission")
 	}
 
-	transaction,_, err := s.bscClient.TransactionByHash(ctx, event.TxHash)
+	transaction, _, err := s.bscClient.TransactionByHash(ctx, event.TxHash)
 
 	if err != nil {
 		return errors.Wrap(err, "failed get transaction info from blockchain")
@@ -251,19 +251,12 @@ func (s *Service) processMissionJoined(ctx context.Context, event types.Log, spa
 		//WARN: mission power may be insufficient while resynchronizing
 		missionDB.MissionPower = missionFromContract.MissionPower.Int64()
 
-		s.log.Infof("Transaction value: %v", transaction.Value())
-
 		if explorerMissionDB == nil {
-			s.log.Infof("missionJoined.SpaceshipCount: %v, missionDB.TotalShips: %v", missionJoined.SpaceshipCount, missionDB.TotalShips)
-
 			missionDB.TotalShips += missionJoined.SpaceshipCount.Int64()
 		} else {
-			s.log.Infof("missionJoined.SpaceshipCount: %v, missionDB.TotalShips: %v, explorerMissionDB: %v", missionJoined.SpaceshipCount, missionDB.TotalShips, explorerMissionDB)
-
-			missionDB.TotalShips = missionDB.TotalShips  + missionJoined.SpaceshipCount.Int64()
+			missionDB.TotalShips = missionDB.TotalShips + missionJoined.SpaceshipCount.Int64()
 		}
 
-		//TODO: update here
 		_, err = s.missionQ.Update(*missionDB)
 
 		if err != nil {
@@ -273,12 +266,8 @@ func (s *Service) processMissionJoined(ctx context.Context, event types.Log, spa
 		return errors.Wrap(err, "failed get info from db about joining mission, resynchronize")
 	}
 
-
-
-
-	//TODO: update and insert here
 	if explorer != nil {
-		explorer.TotalStakeTLM = explorer.TotalStakeTLM + missionFromContract.SpaceshipCost.Int64() * missionJoined.SpaceshipCount.Int64()
+		explorer.TotalStakeTLM = explorer.TotalStakeTLM + missionFromContract.SpaceshipCost.Int64()*missionJoined.SpaceshipCount.Int64()
 		explorer.TotalStakeBNB = explorer.TotalStakeBNB + transaction.Value().Int64()
 		_, err = s.explorerQ.Update(*explorer)
 
@@ -303,11 +292,9 @@ func (s *Service) processMissionJoined(ctx context.Context, event types.Log, spa
 	explorerDBNew, err := s.explorerQ.FilterByAddress(explorer.ExplorerAddress).Get()
 
 	if err != nil || explorerDBNew == nil {
-		//TODO: db dependency
 		return errors.Wrap(err, "failed fetch inserted explorer from database, explorer")
 	}
 
-	//TODO db update here
 	if explorerMissionDB == nil {
 		// if explorerMission first time in the database then investINFO.BNBAmount == transaction.Value()
 		explorerMissionDB := data.ExplorerMission{
@@ -315,7 +302,7 @@ func (s *Service) processMissionJoined(ctx context.Context, event types.Log, spa
 			Mission:       missionJoined.MissionId.Int64(),
 			Withdrawn:     false,
 			NumberShips:   missionJoined.SpaceshipCount.Int64(),
-			TotalStakeTLM:  missionFromContract.SpaceshipCost.Int64()*missionJoined.SpaceshipCount.Int64(),
+			TotalStakeTLM: missionFromContract.SpaceshipCost.Int64() * missionJoined.SpaceshipCount.Int64(),
 			TotalStakeBNB: transaction.Value().Int64(),
 		}
 

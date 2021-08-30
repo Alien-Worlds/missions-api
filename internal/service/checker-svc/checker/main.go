@@ -5,6 +5,7 @@ import (
 	"github.com/Alien-Worlds/missions-api/internal/data"
 	"github.com/Alien-Worlds/missions-api/internal/data/pg"
 	bscClient "github.com/ethereum/go-ethereum/ethclient"
+	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3"
 )
 
@@ -17,6 +18,7 @@ type Service struct {
 	contractAddress  config.ContractAddress
 	lastBlockNumber  uint64
 	log              *logan.Entry
+	db               *pgdb.DB
 }
 
 func New(cfg config.Config) *Service {
@@ -31,5 +33,6 @@ func New(cfg config.Config) *Service {
 		contractAddress:  cfg.Contract(),
 		lastBlockNumber:  uint64(cfg.Block().FromBlockNum),
 		log:              log,
+		db:               cfg.DB(),
 	}
 }
