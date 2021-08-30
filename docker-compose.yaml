@@ -23,7 +23,7 @@ services:
            - ./configs/spaceship-staking.yaml:/spaceship-staking.yaml
          depends_on:
            - spaceship-staking_db
-         entrypoint: sh -c "bsc-checker-events migrate up && bsc-checker-events run service"
+         entrypoint: sh -c "missions-api migrate up && missions-api run service"
 
     spaceship-staking_api:
          image: spaceship-staking:latest
@@ -36,7 +36,7 @@ services:
            - ./configs/spaceship-staking.yaml:/spaceship-staking.yaml
          depends_on:
            - spaceship-staking_db
-         entrypoint: sh -c "bsc-checker-events run api"
+         entrypoint: sh -c "missions-api run api"
 
 volumes:
     spaceship-staking-data:
