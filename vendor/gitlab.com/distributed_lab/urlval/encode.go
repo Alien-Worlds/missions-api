@@ -27,6 +27,16 @@ func Encode(src interface{}) (string, error) {
 	return values.Encode(), nil
 }
 
+//MustEncode - encodes given struct with urlval tags into url query string. Panics on failure
+func MustEncode(src interface{}) string {
+	res, err := Encode(src)
+	if err != nil {
+		panic(errors.Wrap(err, "failed to encode"))
+	}
+
+	return res
+}
+
 func populateValue(values url.Values, refsrc *betterreflect.Struct, i int) error {
 	refValue := refsrc.Value(i)
 	if _, implements := refValue.Interface().(encoding.TextMarshaler); refValue.Type().Kind() == reflect.Struct && !implements {

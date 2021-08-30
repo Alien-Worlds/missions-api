@@ -27,9 +27,13 @@ func (db *DB) Clone() *DB {
 
 // Transaction is generic helper method for specific Q's to implement Transaction capabilities
 func (db *DB) Transaction(fn TransactionFunc) (err error) {
+	return db.TransactionWithOptions(nil, fn)
+}
+
+func (db *DB) TransactionWithOptions(opts *sql.TxOptions, fn TransactionFunc) (err error) {
 	// TODO panic on nested tx
 
-	tx, err := db.db.BeginTxx(context.TODO(), nil)
+	tx, err := db.db.BeginTxx(context.TODO(), opts)
 	if err != nil {
 		return errors.Wrap(err, "failed to begin tx")
 	}
@@ -52,3 +56,4 @@ func (db *DB) Transaction(fn TransactionFunc) (err error) {
 
 	return
 }
+
