@@ -17,7 +17,7 @@ events:
   reward_withdrawn_hash: "0x3f0d190fee71fcedf315c1a691ca936a8893467ce62d0bb52e5643ded084fe46"
 
 blockchain_info:
-  from_block_num: 8325019
+  from_block_num: 6675977
 
 listener:
   addr: :8108

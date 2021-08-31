@@ -9,7 +9,7 @@ rpc:
   endpoint: "https://bsc-dataseed.binance.org/"
 
 contract:
-  address: "0x0000000000000000000000000000000000000000"
+  address: "0xae0742e2a774707c6328f0b10ba7b62c9135f8f2"
 
 events:
   mission_created_hash: "0x280fd1c13afdf05ef9c7dbd512eed44cfa4545e4c471c2673baf1d275a3d8fd9"
@@ -17,7 +17,7 @@ events:
   reward_withdrawn_hash: "0x3f0d190fee71fcedf315c1a691ca936a8893467ce62d0bb52e5643ded084fe46"
 
 blockchain_info:
-  from_block_num: 8325019
+  from_block_num: 6675977
 
 listener:
   addr: :8108
