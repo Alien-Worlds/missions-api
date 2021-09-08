@@ -20,4 +20,4 @@ blockchain_info:
   from_block_num: 6675977
 
 listener:
-  addr: :8108
+  addr: :8018

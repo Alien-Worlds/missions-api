@@ -18,7 +18,7 @@ services:
          environment:
            - KV_VIPER_FILE=/spaceship-staking.yaml
          ports:
-           - 8018:8108
+           - 8079:79
          volumes:
            - ./configs/spaceship-staking.yaml:/spaceship-staking.yaml
          depends_on:
@@ -31,7 +31,7 @@ services:
          environment:
            - KV_VIPER_FILE=/spaceship-staking.yaml
          ports:
-           - 8078:78
+           - 8018:8018
          volumes:
            - ./configs/spaceship-staking.yaml:/spaceship-staking.yaml
          depends_on:
