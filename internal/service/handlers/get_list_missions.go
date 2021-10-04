@@ -1,27 +1,28 @@
 package handlers
 
 import (
-	"github.com/ethereum/go-ethereum/common"
+	"net/http"
+	"strconv"
+
 	"github.com/Alien-Worlds/missions-api/internal/data"
 	"github.com/Alien-Worlds/missions-api/internal/service/helpers"
 	"github.com/Alien-Worlds/missions-api/internal/service/requests"
 	"github.com/Alien-Worlds/missions-api/resources"
-	"net/http"
-	"strconv"
+	"github.com/ethereum/go-ethereum/common"
 
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 )
 
 func GetListMissions(w http.ResponseWriter, r *http.Request) {
-	_, err := requests.NewGetMissionListRequest(r)
+	req, err := requests.NewGetMissionListRequest(r)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 
 	missionQ := helpers.Mission(r)
-	missions, err := missionQ.Select()
+	missions, err := missionQ.Select(req.OffsetPageParams)
 
 	if err != nil {
 		helpers.Log(r).WithError(err).Error("failed to get missions")

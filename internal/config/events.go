@@ -1,33 +1,38 @@
 package config
 
 import (
-	"github.com/stellar/go/support/errors"
-	"gitlab.com/distributed_lab/figure"
-	"gitlab.com/distributed_lab/kit/kv"
+	"fmt"
+	"os"
 )
 
 type EventsConfig struct {
-	MissionJoinedHash string `fig:"mission_joined_hash,required"`
-	MissionCreatedHash string `fig:"mission_created_hash,required"`
-	RewardWithdrawnHash string `fig:"reward_withdrawn_hash,required"`
+	MissionJoinedHash string
+	MissionCreatedHash string 
+	RewardWithdrawnHash string
 }
 
 func (c *config) EventsConfig() EventsConfig {
-	c.once.Do(func() interface{} {
-		var config EventsConfig
+	eventsConfig := new(EventsConfig)
+	envResult, isSet := os.LookupEnv("MISSION_CREATED_HASH")
+	if(isSet) {
+		eventsConfig.MissionCreatedHash = envResult
+	} else {
+		panic("MISSION_CREATED_HASH no set")
+	}
+	envResult, isSet = os.LookupEnv("MISSION_JOINED_HASH")
+	if(isSet) {
+		eventsConfig.MissionJoinedHash = envResult
+	} else {
+		panic("MISSION_JOINED_HASH no set")
+	}
+	envResult, isSet = os.LookupEnv("REWARD_WITHDRAWN_HASH")
+	if(isSet) {
+		eventsConfig.RewardWithdrawnHash = envResult
+	} else {
+		panic("REWARD_WITHDRAWN_HASH no set")
+	}
+	fmt.Printf("eventsConfigs: %+v\n", eventsConfig)
 
-		err := figure.
-			Out(&config).
-			With(figure.BaseHooks).
-			From(kv.MustGetStringMap(c.getter, "events")).
-			Please()
-		if err != nil {
-			panic(errors.Wrap(err, "failed to figure out EventConfig"))
-		}
-
-		c.eventsConfig = config
-		return nil
-	})
-
+	c.eventsConfig = *eventsConfig
 	return c.eventsConfig
 }

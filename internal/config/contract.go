@@ -1,31 +1,21 @@
 package config
 
 import (
-	"github.com/pkg/errors"
-	"gitlab.com/distributed_lab/figure"
-	"gitlab.com/distributed_lab/kit/kv"
+	"fmt"
+	"os"
 )
 
 type ContractAddress struct {
-	Address string `fig:"address,required"`
+	Address string
 }
 
 func (c *config) Contract() ContractAddress {
-	c.once.Do(func() interface{} {
-		var result ContractAddress
+	envResult, isSet := os.LookupEnv("CONTRACT_ADDRESS")
+	if(isSet) {
+		fmt.Printf("Reading from Contract address: %+v\n", envResult)
 
-		err := figure.
-			Out(&result).
-			With(figure.BaseHooks).
-			From(kv.MustGetStringMap(c.getter, "contract")).
-			Please()
-		if err != nil {
-			panic(errors.Wrap(err, "failed to figure out contract"))
-		}
-
-		c.contract = result
-		return nil
-	})
-
-	return c.contract
+		return ContractAddress{ envResult }
+	} else {
+		panic("CONTRACT_ADDRESS no set")
+	}
 }

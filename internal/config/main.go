@@ -1,7 +1,8 @@
 package config
 
 import (
-	"github.com/ethereum/go-ethereum/core/types"
+	"net"
+
 	bscClient "github.com/ethereum/go-ethereum/ethclient"
 	"gitlab.com/distributed_lab/kit/comfig"
 	"gitlab.com/distributed_lab/kit/kv"
@@ -14,32 +15,33 @@ type Config interface {
 	BSC() bscClient.Client
 	Contract() ContractAddress
 	EventsConfig() EventsConfig
+	Listener() net.Listener
 
 	pgdb.Databaser
 	comfig.Logger
-	comfig.Listenerer
+	// comfig.Listenerer
 	signed.Clienter
 }
 
 type config struct {
 	bsc bscClient.Client
-	contract ContractAddress
+	// contract ContractAddress
 	eventsConfig EventsConfig
-	lastBlock types.Block
-
+	// lastBlock types.Block
+	// Listener() net.Listener
 	pgdb.Databaser
 	comfig.Logger
-	comfig.Listenerer
+	// comfig.Listenerer
 	signed.Clienter
 
-	getter kv.Getter
-	once   comfig.Once
+	// getter kv.Getter
+	// once   comfig.Once
 }
 
 func New(getter kv.Getter) Config {
 	return &config{
-		getter:     getter,
-		Listenerer: comfig.NewListenerer(getter),
+		// getter:     getter,
+		// Listenerer: comfig.NewListenerer(getter),
 		Clienter:   signed.NewClienter(getter),
 		Logger:     comfig.NewLogger(getter, comfig.LoggerOpts{}),
 		Databaser:  pgdb.NewDatabaser(getter),

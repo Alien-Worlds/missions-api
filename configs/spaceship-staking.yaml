@@ -1,23 +1,23 @@
-log:
-  level: info
-  disable_sentry: true
+# log:
+#   level: info
+#   disable_sentry: true
 
-db:
-  url: postgres://spaceship:spaceship@spaceship-staking_db/spaceship?sslmode=disable
+# db:
+  # url: postgres://spaceship:spaceship@spaceship-staking_db/spaceship?sslmode=disable
 
-rpc:
-  endpoint: "https://data-seed-prebsc-1-s1.binance.org:8545/"
+# rpc:
+#   endpoint: "https://data-seed-prebsc-1-s1.binance.org:8545/"
 
-contract:
-  address: "0x9fc52D442af64828C500848DB68bC0E752Fa0857"
+# contract:
+#   address: "0x9fc52D442af64828C500848DB68bC0E752Fa0857"
 
-events:
-  mission_created_hash: "0x280fd1c13afdf05ef9c7dbd512eed44cfa4545e4c471c2673baf1d275a3d8fd9"
-  mission_joined_hash: "0xceb49b5adb5e3737df9e0679d210f1006878fb83bf58974f7279b0c79460898b"
-  reward_withdrawn_hash: "0x3f0d190fee71fcedf315c1a691ca936a8893467ce62d0bb52e5643ded084fe46"
+# events:
+#   mission_created_hash: "0x280fd1c13afdf05ef9c7dbd512eed44cfa4545e4c471c2673baf1d275a3d8fd9"
+#   mission_joined_hash: "0xceb49b5adb5e3737df9e0679d210f1006878fb83bf58974f7279b0c79460898b"
+#   reward_withdrawn_hash: "0x3f0d190fee71fcedf315c1a691ca936a8893467ce62d0bb52e5643ded084fe46"
 
-blockchain_info:
-  from_block_num: 12160674 # Contract was deployed on block 12160674
+# blockchain_info:
+#   from_block_num: 6160674 # Contract was deployed on block 12160674
 
-listener:
-  addr: :8018
+# listener:
+#   addr: :8018

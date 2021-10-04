@@ -1,13 +1,14 @@
 package cli
 
 import (
-    "context"
-    "github.com/Alien-Worlds/missions-api/internal/config"
-    "github.com/Alien-Worlds/missions-api/internal/service"
-    "github.com/Alien-Worlds/missions-api/internal/service/checker-svc/checker"
-    "github.com/alecthomas/kingpin"
-    "gitlab.com/distributed_lab/kit/kv"
-    "gitlab.com/distributed_lab/logan/v3"
+	"context"
+
+	"github.com/Alien-Worlds/missions-api/internal/config"
+	"github.com/Alien-Worlds/missions-api/internal/service"
+	"github.com/Alien-Worlds/missions-api/internal/service/checker-svc/checker"
+	"github.com/alecthomas/kingpin"
+	"gitlab.com/distributed_lab/kit/kv"
+	"gitlab.com/distributed_lab/logan/v3"
 )
 
 func Run(args []string) bool {

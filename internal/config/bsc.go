@@ -1,35 +1,23 @@
 package config
 
 import (
+	"fmt"
+	"os"
+
 	bscClient "github.com/ethereum/go-ethereum/ethclient"
-	"gitlab.com/distributed_lab/figure"
-	"gitlab.com/distributed_lab/kit/kv"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 func (c *config) BSC() bscClient.Client {
-	c.once.Do(func() interface{} {
-		var result struct {
-			Endpoint string `fig:"endpoint,required"`
-		}
-
-		err := figure.
-			Out(&result).
-			With(figure.BaseHooks).
-			From(kv.MustGetStringMap(c.getter, "rpc")).
-			Please()
-		if err != nil {
-			panic(errors.Wrap(err, "failed to figure out stellar"))
-		}
-
-		dial, err := bscClient.Dial(result.Endpoint)
+	envResult, isSet := os.LookupEnv("RPC_END_POINT")
+	if(isSet) {
+		dial, err := bscClient.Dial(envResult)
 		if err != nil {
 			panic(errors.Wrap(err, "failed to dial bscClient"))
 		}
-
 		c.bsc = *dial
-		return nil
-	})
+		fmt.Printf("Connecting to BSC endpoint: %v\n", dial)
 
+	}
 	return c.bsc
 }

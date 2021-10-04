@@ -1,11 +1,13 @@
 package data
 
+import "gitlab.com/distributed_lab/kit/pgdb"
+
 type MissionQ interface {
 	New() MissionQ
 
 	Get() (*Mission, error)
-	Select() ([]Mission, error)
-
+	// Select() ([]Mission, error)
+	Select(query pgdb.OffsetPageParams) ([]Mission, error)
 	Insert(mission Mission) (Mission, error)
 	Update(mission Mission) (Mission, error)
 

@@ -2,11 +2,12 @@ package pgdb
 
 import (
 	"database/sql"
-	"github.com/lib/pq"
+	"os"
 	"time"
 
+	"github.com/lib/pq"
+
 	"github.com/pkg/errors"
-	"gitlab.com/distributed_lab/figure"
 	"gitlab.com/distributed_lab/kit/comfig"
 	"gitlab.com/distributed_lab/kit/kv"
 )
@@ -43,11 +44,18 @@ func (d *databaser) readConfig() databaserCfg {
 		ListenerMinRetryDuration: time.Second,
 		ListenerMaxRetryDuration: time.Minute,
 	}
-	err := figure.Out(&config).
-		From(kv.MustGetStringMap(d.getter, "db")).
-		Please()
-	if err != nil {
-		panic(errors.Wrap(err, "failed to figure out"))
+	// err := figure.Out(&config).
+	// 	From(kv.MustGetStringMap(d.getter, "db")).
+	// 	Please()
+	// if err != nil {
+	// 	panic(errors.Wrap(err, "failed to figure out"))
+	// }
+
+	envResult, isSet := os.LookupEnv("DB_URL")
+	if(isSet) {
+		config.URL = envResult
+	} else {
+		panic("DB_URL no set")
 	}
 
 	return config

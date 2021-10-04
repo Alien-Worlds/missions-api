@@ -2,9 +2,10 @@ package pg
 
 import (
 	"database/sql"
+
+	"github.com/Alien-Worlds/missions-api/internal/data"
 	"github.com/Masterminds/squirrel"
 	"github.com/fatih/structs"
-	"github.com/Alien-Worlds/missions-api/internal/data"
 	"gitlab.com/distributed_lab/kit/pgdb"
 )
 
@@ -13,7 +14,7 @@ const tableMission = "mission"
 func NewMissionQ(db *pgdb.DB) data.MissionQ {
 	return &missionQ{
 		db:  db.Clone(),
-		sql: squirrel.Select("*").From(tableMission).OrderBy("mission_id DESC"),
+		sql: squirrel.Select("*").From(tableMission),
 	}
 }
 
@@ -38,10 +39,10 @@ func (d *missionQ) Get() (*data.Mission, error) {
 	return &result, err
 }
 
-func (d *missionQ) Select() ([]data.Mission, error) {
+func (d *missionQ) Select(query pgdb.OffsetPageParams) ([]data.Mission, error) {
 	var result []data.Mission
-	err := d.db.Select(&result, d.sql)
 
+	err := d.db.Select(&result, query.ApplyTo( d.sql,"mission_id"))
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}

@@ -1,30 +1,29 @@
 package config
 
 import (
-	"github.com/pkg/errors"
-	"gitlab.com/distributed_lab/figure"
-	"gitlab.com/distributed_lab/kit/kv"
+	"fmt"
+	"os"
+	"strconv"
+
+	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 type Block struct {
-	FromBlockNum uint32 `fig:"from_block_num,required"`
+	FromBlockNum uint32
 }
 
 func (c *config) Block() Block {
-	var result Block
 
-	c.once.Do(func() interface{} {
-		err := figure.
-			Out(&result).
-			With(figure.BaseHooks).
-			From(kv.MustGetStringMap(c.getter, "blockchain_info")).
-			Please()
-		if err != nil {
-			panic(errors.Wrap(err, "failed to figure out last block info"))
+	envResult, blockIsSet := os.LookupEnv("FROM_BLOCK_NUM")
+	if(blockIsSet) {
+		res, err := strconv.ParseInt(envResult,10,32)
+		if(err != nil) {
+			panic(errors.Wrap(err, "failed to get Block Num"))
 		}
+		fmt.Printf("Starting from Block Number: %+v\n", res)
 
-		return nil
-	})
-
-	return result
+		return Block{ uint32(res)}
+	} else {
+		panic("FROM_BLOCK_NUM no set")
+	}
 }
