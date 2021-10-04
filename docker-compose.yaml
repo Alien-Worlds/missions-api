@@ -19,7 +19,7 @@ services:
            - KV_VIPER_FILE=/spaceship-staking.yaml
            - CONTRACT_ADDRESS
            - FROM_BLOCK_NUM
-           - RPC_END_POINT=https://data-seed-prebsc-2-s1.binance.org:8545/
+           - RPC_END_POINT
            - MISSION_CREATED_HASH=0x280fd1c13afdf05ef9c7dbd512eed44cfa4545e4c471c2673baf1d275a3d8fd9
            - MISSION_JOINED_HASH=0xceb49b5adb5e3737df9e0679d210f1006878fb83bf58974f7279b0c79460898b
            - REWARD_WITHDRAWN_HASH=0x3f0d190fee71fcedf315c1a691ca936a8893467ce62d0bb52e5643ded084fe46
