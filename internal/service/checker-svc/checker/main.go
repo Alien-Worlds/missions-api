@@ -15,6 +15,7 @@ type Service struct {
 	missionQ         data.MissionQ
 	explorerQ        data.ExplorerQ
 	explorerMissionQ data.ExplorerMissionQ
+	joinEventQ       data.JoinEventQ
 	contractAddress  config.ContractAddress
 	lastBlockNumber  uint64
 	log              *logan.Entry
@@ -30,6 +31,7 @@ func New(cfg config.Config) *Service {
 		missionQ:         pg.NewMissionQ(cfg.DB()),
 		explorerQ:        pg.NewExplorerQ(cfg.DB()),
 		explorerMissionQ: pg.NewExplorerMissionQ(cfg.DB()),
+		joinEventQ:       pg.NewJoinEventQ(cfg.DB()),
 		contractAddress:  cfg.Contract(),
 		lastBlockNumber:  uint64(cfg.Block().FromBlockNum),
 		log:              log,
