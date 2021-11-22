@@ -65,7 +65,7 @@ func (d *joinEventQ) Insert(joinEvent data.JoinEvent) (data.JoinEvent, error) {
 func (d *joinEventQ) Update(joinEvent data.JoinEvent) (data.JoinEvent, error) {
 	clauses := structs.Map(joinEvent)
 
-	query := squirrel.Update(tableJoinEvent).Where(squirrel.Eq{"transaction_id": joinEvent.JoinEventId}).SetMap(clauses).Suffix("returning *")
+	query := squirrel.Update(tableJoinEvent).Where(squirrel.Eq{"transaction_id": joinEvent.TransactionId}).SetMap(clauses).Suffix("returning *")
 
 	err := d.db.Get(&joinEvent, query)
 	if err != nil {
@@ -75,17 +75,8 @@ func (d *joinEventQ) Update(joinEvent data.JoinEvent) (data.JoinEvent, error) {
 	return joinEvent, err
 }
 
-func (d joinEventQ) FilterById(transaction_id int64) data.JoinEventQ {
-	d.sql = d.sql.Where(squirrel.Eq{"transaction_id": transaction_id})
+func (d joinEventQ) FilterById(transaction_id string) data.JoinEventQ {
+	d.sql = d.sql.Where(squirrel.Like{"transaction_id": transaction_id})
 	return &d
 }
 
-func (d joinEventQ) FilterByMission(mission string) data.JoinEventQ {
-	d.sql = d.sql.Where(squirrel.Eq{"mission": mission})
-	return &d
-}
-
-func (d joinEventQ) FilterByExplorer(explorerId string) data.JoinEventQ {
-	d.sql = d.sql.Where(squirrel.Eq{"explorer_address": explorerId})
-	return &d
-}

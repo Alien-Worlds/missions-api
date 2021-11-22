@@ -9,17 +9,16 @@ type JoinEventQ interface {
 	Insert(JoinEvent JoinEvent) (JoinEvent, error)
 	Update(JoinEvent JoinEvent) (JoinEvent, error)
 
-	FilterById(transsctionId int64) JoinEventQ
-	FilterByMission(missionId string) JoinEventQ
-	FilterByExplorer(explorerId string) JoinEventQ
+	FilterById(join_event_id string) JoinEventQ
+
 }
 
 type JoinEvent struct{
-	JoinEventId       uint64 `db:"transaction_id" structs:"-"`
-	Explorer          string `db:"explorer_address" structs:"explorer_address"`
-	Mission           int64 `db:"mission" structs:"mission"`
-	// Withdrawn         bool `db:"withdrawn" structs:"withdrawn"`
-	NumberShips       int64 `db:"number_ships" structs:"number_ships"`
-	StakeTLM          int64 `db:"stake_tlm" structs:"stake_tlm"`
-	StakeBNB          int64 `db:"stake_bnb" structs:"stake_bnb"`
+	TransactionId       string `db:"transaction_id" structs:"transaction_id"`
+	// Explorer          string `db:"explorer_address" structs:"explorer_address"`
+	// Mission           int64 `db:"mission" structs:"mission"`
+	// // Withdrawn         bool `db:"withdrawn" structs:"withdrawn"`
+	// NumberShips       int64 `db:"number_ships" structs:"number_ships"`
+	// StakeTLM          int64 `db:"stake_tlm" structs:"stake_tlm"`
+	// StakeBNB          uint64 `db:"stake_bnb" structs:"stake_bnb"`
 }
