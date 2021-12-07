@@ -15,7 +15,10 @@ services:
            - spaceship-staking-data:/pgdata
 
     spaceship-staking:
-         image: spaceship-staking:latest
+         build:
+           context: .
+           cache_from:
+            - spaceship-staking:latest
          restart: unless-stopped
          environment:
            - KV_VIPER_FILE=/spaceship-staking.yaml
@@ -37,7 +40,10 @@ services:
          entrypoint: sh -c "missions-api migrate up && missions-api run service"
 
     spaceship-staking_api:
-         image: spaceship-staking:latest
+         build:
+           context: .
+           cache_from:
+            - spaceship-staking:latest
          restart: unless-stopped
          environment:
            - KV_VIPER_FILE=/spaceship-staking.yaml

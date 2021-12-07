@@ -65,7 +65,7 @@ An event listener for contracts deployed on binance smart chain to store the eve
 3. Build container image:
    
    ```sh
-   docker build -t spaceship-staking .
+   docker compose build
 	```
 4. Run using docker-compose
    ```sh
