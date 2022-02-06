@@ -90,3 +90,9 @@ where *8888* is a port to listen on.
 /missions/{mission-id} # get mission by it's id
 /explorers/{explorer-address} # get missions joined by explorer address
 ```
+
+#### Running tests
+From the root of the project, run 
+```sh
+make test
+```
