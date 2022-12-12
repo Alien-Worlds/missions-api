@@ -50,7 +50,7 @@ func (s *Service) Run(ctx context.Context) {
 
 			s.log.Infof("Fetching events from block %d to block %d", s.lastBlockNumber, toBlockNum)
 		} else {
-			toBlockNum = currBlock.NumberU64()
+			toBlockNum = currBlock.NumberU64() - 5
 
 			s.log.Infof("Fetching events from block %d to head of blockchain,  block %d", s.lastBlockNumber, toBlockNum)
 		}
@@ -76,11 +76,11 @@ func (s *Service) Run(ctx context.Context) {
 		if currBlock.NumberU64()-s.lastBlockNumber > 500 {
 			s.lastBlockNumber = s.lastBlockNumber + 501
 		} else {
-			s.lastBlockNumber = currBlock.NumberU64() + 1
+			s.lastBlockNumber = currBlock.NumberU64() + 1 - 5
 		}
 
 		return nil
-	}, time.Second, 30*time.Second, time.Minute)
+	}, 3*time.Second, 30*time.Second, time.Minute)
 }
 
 func (s *Service) process(ctx context.Context, logs []types.Log) error {
