@@ -11,13 +11,17 @@ github.com/alecthomas/template
 github.com/alecthomas/template/parse
 # github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf
 github.com/alecthomas/units
-# github.com/btcsuite/btcd v0.20.1-beta
-github.com/btcsuite/btcd/btcec
+# github.com/btcsuite/btcd/btcec/v2 v2.2.0
+github.com/btcsuite/btcd/btcec/v2
+github.com/btcsuite/btcd/btcec/v2/ecdsa
 # github.com/certifi/gocertifi v0.0.0-20200211180108-c7c1fbc02894
 github.com/certifi/gocertifi
-# github.com/deckarep/golang-set v0.0.0-20180603214616-504e848d77ea
+# github.com/deckarep/golang-set v1.8.0
 github.com/deckarep/golang-set
-# github.com/ethereum/go-ethereum v1.10.8
+# github.com/decred/dcrd/dcrec/secp256k1/v4 v4.0.1
+github.com/decred/dcrd/dcrec/secp256k1/v4
+github.com/decred/dcrd/dcrec/secp256k1/v4/ecdsa
+# github.com/ethereum/go-ethereum v1.10.22
 ## explicit
 github.com/ethereum/go-ethereum
 github.com/ethereum/go-ethereum/accounts
@@ -42,6 +46,7 @@ github.com/ethereum/go-ethereum/metrics
 github.com/ethereum/go-ethereum/p2p/netutil
 github.com/ethereum/go-ethereum/params
 github.com/ethereum/go-ethereum/rlp
+github.com/ethereum/go-ethereum/rlp/internal/rlpstruct
 github.com/ethereum/go-ethereum/rpc
 github.com/ethereum/go-ethereum/signer/core/apitypes
 # github.com/fatih/structs v1.1.0
@@ -80,6 +85,8 @@ github.com/gobuffalo/packr/v2/file/resolver
 github.com/gobuffalo/packr/v2/file/resolver/encoding/hex
 github.com/gobuffalo/packr/v2/jam/parser
 github.com/gobuffalo/packr/v2/plog
+# github.com/google/go-cmp v0.5.6
+## explicit
 # github.com/google/jsonapi v0.0.0-20200226002910-c8283f632fb7
 github.com/google/jsonapi
 # github.com/google/uuid v1.2.0
@@ -120,7 +127,7 @@ github.com/markbates/errx
 github.com/markbates/oncer
 # github.com/markbates/safe v1.0.1
 github.com/markbates/safe
-# github.com/mitchellh/mapstructure v1.1.2
+# github.com/mitchellh/mapstructure v1.4.1
 github.com/mitchellh/mapstructure
 # github.com/nullstyle/go-xdr v0.0.0-20180726165426-f4c839f75077
 ## explicit
@@ -128,9 +135,9 @@ github.com/nullstyle/go-xdr/xdr3
 # github.com/oklog/ulid v1.3.1
 github.com/oklog/ulid
 # github.com/pelletier/go-toml v1.9.0
+## explicit
 github.com/pelletier/go-toml
 # github.com/pkg/errors v0.9.1
-## explicit
 github.com/pkg/errors
 # github.com/rjeczalik/notify v0.9.1
 github.com/rjeczalik/notify
@@ -154,31 +161,23 @@ github.com/spf13/jwalterweatherman
 github.com/spf13/pflag
 # github.com/spf13/viper v1.4.0
 github.com/spf13/viper
-# github.com/stellar/go v0.0.0-20210827151532-82592ce0f269
-## explicit
-github.com/stellar/go/support/errors
 # github.com/tklauser/go-sysconf v0.3.5
 github.com/tklauser/go-sysconf
 # github.com/tklauser/numcpus v0.2.2
 github.com/tklauser/numcpus
 # github.com/xr9kayu/logrus v0.7.2
 github.com/xr9kayu/logrus/sentry
+# github.com/ziutek/mymysql v1.5.4
+## explicit
 # gitlab.com/distributed_lab/ape v1.6.0
 ## explicit
 gitlab.com/distributed_lab/ape
 gitlab.com/distributed_lab/ape/problems
 # gitlab.com/distributed_lab/figure v2.1.0+incompatible
-## explicit
 gitlab.com/distributed_lab/figure
 # gitlab.com/distributed_lab/kit v1.8.6
 ## explicit
 gitlab.com/distributed_lab/kit/comfig
-gitlab.com/distributed_lab/kit/copus
-gitlab.com/distributed_lab/kit/copus/cop
-gitlab.com/distributed_lab/kit/copus/janus
-gitlab.com/distributed_lab/kit/copus/types
-gitlab.com/distributed_lab/kit/janus
-gitlab.com/distributed_lab/kit/janus/internal
 gitlab.com/distributed_lab/kit/kv
 gitlab.com/distributed_lab/kit/pgdb
 # gitlab.com/distributed_lab/logan v3.8.0+incompatible
@@ -217,22 +216,22 @@ gitlab.com/tokend/keypair/figurekeypair
 gitlab.com/tokend/keypair/internal
 gitlab.com/tokend/keypair/internal/crc16
 gitlab.com/tokend/keypair/internal/strkey
-# golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97
+# golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
 golang.org/x/crypto/ed25519
 golang.org/x/crypto/ed25519/internal/edwards25519
 golang.org/x/crypto/pbkdf2
 golang.org/x/crypto/scrypt
 golang.org/x/crypto/sha3
 golang.org/x/crypto/ssh/terminal
-# golang.org/x/sys v0.0.0-20210816183151-1e6c022a8912
+# golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a
 golang.org/x/sys/cpu
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/plan9
 golang.org/x/sys/unix
 golang.org/x/sys/windows
-# golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1
+# golang.org/x/term v0.0.0-20210927222741-03fcf44c2211
 golang.org/x/term
-# golang.org/x/text v0.3.6
+# golang.org/x/text v0.3.7
 golang.org/x/text/transform
 golang.org/x/text/unicode/norm
 # gopkg.in/gorp.v1 v1.7.2
