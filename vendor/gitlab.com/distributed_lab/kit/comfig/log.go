@@ -1,12 +1,10 @@
 package comfig
 
 import (
-	"os"
-	"strconv"
-
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	sentryhook "github.com/xr9kayu/logrus/sentry"
+	"gitlab.com/distributed_lab/figure"
 	"gitlab.com/distributed_lab/kit/kv"
 	"gitlab.com/distributed_lab/logan/v3"
 )
@@ -34,7 +32,7 @@ func NewLogger(getter kv.Getter, options LoggerOpts) Logger {
 
 func (l *logger) Log() *logan.Entry {
 	return l.once.Do(func() interface{} {
-		config, err := parseLogConfig()
+		config, err := parseLogConfig(kv.MustGetStringMap(l.getter, "log"))
 		if err != nil {
 			panic(errors.Wrap(err, "failed to figure out logger"))
 		}
@@ -69,33 +67,21 @@ func (l *logger) Log() *logan.Entry {
 }
 
 type loggerConfig struct {
-	Level         logan.Level 
-	DisableSentry bool
+	Level         logan.Level `fig:"level"`
+	DisableSentry bool        `fig:"disable_sentry"`
 }
 
-func parseLogConfig() (*loggerConfig, error) {
+func parseLogConfig(raw map[string]interface{}) (*loggerConfig, error) {
 	config := loggerConfig{
 		Level: logan.ErrorLevel,
 	}
 
-	var err error 
-	envResult, isSet := os.LookupEnv("LOG_LEVEL")
-	if(isSet) {
-		config.Level, err = logan.ParseLevel(envResult)
-		if err != nil {
-			panic("LOG_LEVEL not set")
-		}
-	} else {
-		panic("LOG_LEVEL no set")
-	}
-	envResult, isSet = os.LookupEnv("LOG_DISABLE_SENTRY")
-	if(isSet) {
-		config.DisableSentry, err = strconv.ParseBool(envResult)
-		if err != nil {
-			panic("LOG_LEVEL not set")
-		}
-	} else {
-		panic("LOG_DISABLE_SENTRY no set")
+	err := figure.
+		Out(&config).
+		From(raw).
+		Please()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to figure out")
 	}
 
 	return &config, nil

@@ -2,7 +2,6 @@ package comfig
 
 import (
 	"net"
-	"os"
 	"sync"
 
 	"github.com/pkg/errors"
@@ -41,11 +40,6 @@ func (l *listener) Listener() net.Listener {
 			return
 		}
 		l.value, l.err = net.Listen("tcp", config.Addr)
-
-		envResult, envIsSet := os.LookupEnv("LISTEN_ADDRESS")
-		if(envIsSet) {
-			l.value, l.err = net.Listen("tcp", envResult)
-		}
 	})
 	if l.err != nil {
 		panic(l.err)
